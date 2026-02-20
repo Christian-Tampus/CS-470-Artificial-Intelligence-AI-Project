@@ -7,7 +7,7 @@
 #==================================================
 
 #Start Program
-print("[SYSTEM MESSAGE] Program Start!")
+print("[SYSTEM MESSAGE] Train.py Program Start!")
 
 #Import Dependencies
 import os
@@ -125,4 +125,4 @@ trainingCNNModel.fit(
 subprocess.run([sys.executable, "test.py"])
 
 #Terminate Program
-print("[SYSTEM MESSAGE] Program Terminated...")
+print("[SYSTEM MESSAGE] Train.py Program Terminated...")

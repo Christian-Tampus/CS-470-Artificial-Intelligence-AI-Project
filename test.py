@@ -7,7 +7,7 @@
 #==================================================
 
 #Start Program
-print("[SYSTEM MESSAGE] Program Start!")
+print("[SYSTEM MESSAGE] Test.py Program Start!")
 
 #Import Dependencies
 import os
@@ -50,4 +50,4 @@ for file in os.listdir(testingSetDirectory):
 print("[SYSTEM MESSAGE] Accuracy: " + str(round((correctResults / testSize) * 100, 2)) + "%")
 
 #Terminate Program
-print("[SYSTEM MESSAGE] Program Terminated...")
+print("[SYSTEM MESSAGE] Test.py Program Terminated...")
