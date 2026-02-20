@@ -45,12 +45,12 @@ xTrainData = tf.convert_to_tensor(catImages + dogImages)
 yTrainData = tf.convert_to_tensor(catLabels + dogLabels)
 
 #Shuffle Dataset
-trainDataSet = tf.data.Dataset.from_tensor_slices((xTrainData, yTrainData)).shuffle(len(yTrainData))
+dataSet = tf.data.Dataset.from_tensor_slices((xTrainData, yTrainData)).shuffle(len(yTrainData))
 
 #Split Dataset Into Training & Testing With (80/20) Split
 testingSize = int(0.2 * len(yTrainData))
-trainDataSet = trainDataSet.skip(testingSize).batch(batchSize)
-testingDataSet = trainDataSet.take(testingSize).batch(batchSize)
+trainDataSet = dataSet.skip(testingSize).batch(batchSize)
+testingDataSet = dataSet.take(testingSize).batch(batchSize)
 
 #Data Augmentation
 dataAugmentation = tf.keras.Sequential([
