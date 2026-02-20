@@ -36,10 +36,18 @@ def predictImage(directory):
     return "Cat"
 
 #Test CNN Model
+correctResults = 0
+testSize = 0
 for file in os.listdir(testingSetDirectory):
+    testSize += 1
     imagePath = testingSetDirectory / file
     result = predictImage(imagePath)
     print(f"[SYSTEM MESSAGE] Prediction For File: {file} Result: {result}")
+    if "dog" in file.lower() and result.lower() == "dog" or "cat" in file.lower() and result.lower() == "cat":
+        correctResults += 1
+
+#Calculate & Print Out Accuracy
+print("[SYSTEM MESSAGE] Accuracy: " + str(round((correctResults / testSize) * 100, 2)) + "%")
 
 #Terminate Program
 print("[SYSTEM MESSAGE] Program Terminated...")

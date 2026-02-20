@@ -18,7 +18,7 @@ from pathlib import Path
 #Declare Variables
 imageSize = 150
 batchSize = 32
-epochs = 5
+epochs = 5 #Try different epochs to improve accuracy, remember to record data
 currentDirectory = Path(__file__).resolve().parent
 catsDirectory = currentDirectory / "DataSets" / "TrainingSet" / "Cats"
 dogsDirectory = currentDirectory / "DataSets" / "TrainingSet" / "Dogs"
@@ -49,14 +49,20 @@ dataSet = tf.data.Dataset.from_tensor_slices((xTrainData, yTrainData)).shuffle(l
 
 #Split Dataset Into Training & Testing With (80/20) Split
 testingSize = int(0.2 * len(yTrainData))
-trainDataSet = dataSet.skip(testingSize).batch(batchSize)
-testingDataSet = dataSet.take(testingSize).batch(batchSize)
+trainDataSet = dataSet.skip(testingSize)
+testingDataSet = dataSet.take(testingSize)
+trainDataSet = trainDataSet.map(lambda x, y: (dataAugmentation(x, training = True)))
+testingDataSet = testingDataSet.batch(batchSize)
 
 #Data Augmentation
 dataAugmentation = tf.keras.Sequential([
     layers.RandomFlip("horizontal"),
     layers.RandomRotation(0.1),
     layers.RandomZoom(0.1),
+    layers.RandomContrast(0.1),
+    layers.RandomTranslation(0.1, 0.1),
+    layers.RandomHeight(0.1),
+    layers.RandomWidth(0.1)
 ])
 
 #Build CNN Model
@@ -73,7 +79,7 @@ trainingCNNModel = models.Sequential([
 
 #Compile CNN Model
 trainingCNNModel.compile(
-    optimizer = "adam",
+    optimizer = tf.keras.optimizers.Adam(learning_rate = 0.0005),
     loss = "binary_crossentropy",
     metrics = ["accuracy"]
 )
