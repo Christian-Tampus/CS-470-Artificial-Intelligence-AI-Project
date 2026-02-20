@@ -51,8 +51,6 @@ dataSet = tf.data.Dataset.from_tensor_slices((xTrainData, yTrainData)).shuffle(l
 testingSize = int(0.2 * len(yTrainData))
 trainDataSet = dataSet.skip(testingSize)
 testingDataSet = dataSet.take(testingSize)
-trainDataSet = trainDataSet.map(lambda x, y: (dataAugmentation(x, training = True)))
-testingDataSet = testingDataSet.batch(batchSize)
 
 #Data Augmentation
 dataAugmentation = tf.keras.Sequential([
@@ -64,6 +62,8 @@ dataAugmentation = tf.keras.Sequential([
     layers.RandomHeight(0.1),
     layers.RandomWidth(0.1)
 ])
+trainDataSet = trainDataSet.map(lambda x, y: (dataAugmentation(x, training = True)))
+testingDataSet = testingDataSet.batch(batchSize)
 
 #Build CNN Model
 trainingCNNModel = models.Sequential([
