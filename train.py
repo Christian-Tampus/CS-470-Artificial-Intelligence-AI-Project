@@ -35,7 +35,7 @@ normalizationLayer = layers.Rescaling(1./255)
 trainDataSet = trainDataSet.map(lambda x, y: (normalizationLayer(x), y))
 
 #Build CNN Model
-trainingCNNModel = trainingCNNModel.Sequential([
+trainingCNNModel = models.Sequential([
     layers.Input(shape = (imageSize, imageSize, 3)),
     layers.Conv2D(32, (3, 3), activation = "relu"),
     layers.MaxPooling2D(2, 2),
