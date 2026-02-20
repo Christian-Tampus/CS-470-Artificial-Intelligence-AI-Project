@@ -27,7 +27,7 @@ trainDataSet = tf.keras.preprocessing.image_dataset_from_directory(
     labels = "inferred",
     label_mode = "binary",
     image_size = (imageSize, imageSize),
-    batchSize = batchSize
+    batch_size = batchSize
 )
 
 #Normalize Images
