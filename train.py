@@ -12,23 +12,39 @@ print("[SYSTEM MESSAGE] Program Start!")
 import os
 import tensorflow as tf
 from tensorflow.keras import layers, models
+from pathlib import Path
 
 #Declare Variables
 imageSize = 150
 batchSize = 32
 epochs = 5
-currentDirectory = os.path.dirname(os.path.abspath(__file__))
-trainingSetDirectory = os.path.join(currentDirectory, "DataSets", "TrainingSet")
+currentDirectory = Path(__file__).resolve().parent
+catsDirectory = currentDirectory / "DataSets" / "TrainingSet" / "Cats"
+dogsDirectory = currentDirectory / "DataSets" / "TrainingSet" / "Dogs"
 trainingModelsDirectory = os.path.join(currentDirectory, "TrainingModels")
 
+#Load Images Function
+def loadImages(folder, label):
+    allImagesArray = []
+    allLabelsArray = []
+    for file in os.listdir(folder):
+        imagePath = folder / file
+        image = tf.keras.utils.load_img(imagePath, target_size = (imageSize, imageSize))
+        imageArray = tf.keras.utils.img_to_array(image) / 255.0
+        allImagesArray.append(imageArray)
+        allLabelsArray.append(label)
+    return allImagesArray, allLabelsArray
+
+#Load Images
+catImages, catLabels = loadImages(catsDirectory, 0)
+dogImages, dogLabels = loadImages(dogsDirectory, 1)
+
+#Combine & Convert To TensorFlow Dataset
+xTrainData = tf.convert_to_tensor(catImages + dogImages)
+yTrainData = tf.convert_to_tensor(catLabels + dogLabels)
+
 #Load Dataset
-trainDataSet = tf.keras.preprocessing.image_dataset_from_directory(
-    directory = trainingSetDirectory,
-    labels = "inferred",
-    label_mode = "binary",
-    image_size = (imageSize, imageSize),
-    batch_size = batchSize
-)
+trainDataSet = tf.data.Dataset.from_tensor_slices((xTrainData, yTrainData)).shuffle(len(yTrainData)).batch(batchSize)
 
 #Normalize Images
 normalizationLayer = layers.Rescaling(1./255)
