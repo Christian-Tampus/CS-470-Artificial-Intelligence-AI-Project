@@ -59,21 +59,23 @@ dataAugmentation = tf.keras.Sequential([
     layers.RandomZoom(0.1),
     layers.RandomContrast(0.1),
     layers.RandomTranslation(0.1, 0.1),
-    layers.RandomHeight(0.1),
-    layers.RandomWidth(0.1)
+    layers.Resizing(imageSize, imageSize)
 ])
-trainDataSet = trainDataSet.map(lambda x, y: (dataAugmentation(x, training = True)))
+trainDataSet = trainDataSet.map(lambda x, y: (dataAugmentation(x, training = True), y)).batch(batchSize)
 testingDataSet = testingDataSet.batch(batchSize)
 
 #Build CNN Model
 trainingCNNModel = models.Sequential([
-    dataAugmentation,
-    layers.Conv2D(32, (3, 3), activation = "relu", input_shape = (imageSize, imageSize, 3)),
+    layers.Input(shape = (imageSize, imageSize, 3)),
+    layers.Conv2D(32, (3, 3), activation = "relu"),
     layers.MaxPooling2D(2, 2),
     layers.Conv2D(64, (3, 3), activation = "relu"),
     layers.MaxPooling2D(2, 2),
+    layers.Conv2D(128, (3, 3), activation = "relu"),
+    layers.MaxPooling2D(2, 2),
     layers.Flatten(),
-    layers.Dense(64, activation = "relu"),
+    layers.Dense(128, activation = "relu"),
+    layers.Dropout(0.5),
     layers.Dense(1, activation = "sigmoid")
 ])
 
