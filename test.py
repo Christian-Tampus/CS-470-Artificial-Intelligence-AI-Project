@@ -17,7 +17,7 @@ from PIL import Image
 from pathlib import Path
 
 #Declare Variables
-imageSize = 150
+imageSize = 180
 currentDirectory = Path(__file__).resolve().parent
 testingSetDirectory = currentDirectory / "DataSets" / "TestingSet"
 trainingCNNModelDirectory = currentDirectory / "TrainingModels" / "CNN_Model_1.h5"

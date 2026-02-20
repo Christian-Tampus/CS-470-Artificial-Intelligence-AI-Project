@@ -14,11 +14,11 @@ import os
 import subprocess
 import sys
 import tensorflow as tf
-from tensorflow.keras import layers, models
+from tensorflow.keras import layers, models, regularizers
 from pathlib import Path
 
 #Declare Variables
-imageSize = 150
+imageSize = 180
 batchSize = 32
 currentDirectory = Path(__file__).resolve().parent
 catsDirectory = currentDirectory / "DataSets" / "TrainingSet" / "Cats"
@@ -56,26 +56,34 @@ testingDataSet = dataSet.take(testingSize)
 #Data Augmentation
 dataAugmentation = tf.keras.Sequential([
     layers.RandomFlip("horizontal"),
-    layers.RandomRotation(0.1),
-    layers.RandomZoom(0.1),
-    layers.RandomContrast(0.1),
-    layers.RandomTranslation(0.1, 0.1),
+    layers.RandomRotation(0.2),
+    layers.RandomZoom(0.2),
+    layers.RandomContrast(0.15),
+    layers.RandomTranslation(0.15, 0.15),
     layers.Resizing(imageSize, imageSize)
 ])
-trainDataSet = trainDataSet.map(lambda x, y: (dataAugmentation(x, training = True), y)).batch(batchSize)
-testingDataSet = testingDataSet.batch(batchSize)
+
+#Prepare Datasets
+trainDataSet = trainDataSet.map(lambda x, y: (dataAugmentation(x, training = True), y)).shuffle(buffer_size = 1000).batch(batchSize).prefetch(tf.data.AUTOTUNE)
+testingDataSet = testingDataSet.batch(batchSize).prefetch(tf.data.AUTOTUNE)
 
 #Build CNN Model
 trainingCNNModel = models.Sequential([
     layers.Input(shape = (imageSize, imageSize, 3)),
-    layers.Conv2D(32, (3, 3), activation = "relu"),
+    layers.Conv2D(32, (3, 3), activation = "relu", kernel_regularizer = regularizers.l2(0.001)),
+    layers.BatchNormalization(),
     layers.MaxPooling2D(2, 2),
-    layers.Conv2D(64, (3, 3), activation = "relu"),
+    layers.Dropout(0.2),
+    layers.Conv2D(64, (3, 3), activation = "relu", kernel_regularizer = regularizers.l2(0.001)),
+    layers.BatchNormalization(),
     layers.MaxPooling2D(2, 2),
-    layers.Conv2D(128, (3, 3), activation = "relu"),
+    layers.Dropout(0.2),
+    layers.Conv2D(128, (3, 3), activation = "relu", kernel_regularizer = regularizers.l2(0.001)),
+    layers.BatchNormalization(),
     layers.MaxPooling2D(2, 2),
+    layers.Dropout(0.3),
     layers.Flatten(),
-    layers.Dense(128, activation = "relu"),
+    layers.Dense(128, activation = "relu", kernel_regularizer = regularizers.l2(0.001)),
     layers.Dropout(0.5),
     layers.Dense(1, activation = "sigmoid")
 ])
@@ -84,22 +92,22 @@ trainingCNNModel = models.Sequential([
 trainingCNNModel.compile(
     optimizer = tf.keras.optimizers.Adam(learning_rate = 0.0005),
     loss = "binary_crossentropy",
-    metrics = ["accuracy"]
+    metrics = ["accuracy", tf.keras.metrics.Precision(), tf.keras.metrics.Recall()]
 )
 
-#Display Epochs
-#Epochs Accuracy Test Results @ 2/20/2026
-#Epochs [5 = 46.88%, 6 = 68.75%, 7 = 62.5%, 8 = 68.75%, 9 = 78.12%, 10 = 78.12%, 11 = 75.0%, 12 = 81.25%, 13 = 84.38%, 14 = 81.25% 15 = 87.5%, 16 = 84.38%, 17 = 84.38%, 18 = 87.5%, 19 = 81.25%, 20 = 81.25%]
-#Epochs [1-5]: ~ <= 50%
-#Epochs [6-8]: ~60% - ~65%
-#Epochs [9-11]: ~70% - ~75%
-#Epochs [12-14]: ~80% - ~85%
-#Epochs [15-20]: ~85%
-epochs = 20
-print("[SYSTEM MESSAGE] Testing With Epochs:",epochs)
+#Callbacks: Learning Rate Reduction & Early Stopping
+learingRateReductionCallback = tf.keras.callbacks.ReduceLROnPlateau(
+    mointor = "val_loss", factor = 0.5, patience = 3, min_lr = 1e-6, verbose = 1
+)
+earlyStoppingCallback = tf.keras.callbacks.EarlyStopping(
+    monitor = "val_accuracy", patience = 5, restore_best_weights = True, verbose = 1
+)
 
 #Train CNN Model
-trainingCNNModel.fit(trainDataSet, validation_data = testingDataSet, epochs = epochs)
+epochs = 50
+print("[SYSTEM MESSAGE] Testing With Epochs:", epochs)
+
+trainingCNNModel.fit(trainDataSet, validation_data = testingDataSet, epochs = epochs, callbacks = [learingRateReductionCallback, earlyStoppingCallback])
 
 #Save CNN Model
 saveCNNModelDirectory = os.path.join(trainingModelsDirectory, "CNN_Model_1.h5")
