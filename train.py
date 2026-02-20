@@ -45,16 +45,24 @@ xTrainData = tf.convert_to_tensor(catImages + dogImages)
 yTrainData = tf.convert_to_tensor(catLabels + dogLabels)
 
 #Shuffle Dataset
-trainDataSet = tf.data.Dataset.from_tensor_slices((xTrainData, yTrainData)).shuffle(len(yTrainData)).batch(batchSize)
+trainDataSet = tf.data.Dataset.from_tensor_slices((xTrainData, yTrainData)).shuffle(len(yTrainData))
 
-#Normalize Images
-normalizationLayer = layers.Rescaling(1./255)
-trainDataSet = trainDataSet.map(lambda x, y: (normalizationLayer(x), y))
+#Split Dataset Into Training & Testing With (80/20) Split
+testingSize = int(0.2 * len(yTrainData))
+trainDataSet = trainDataSet.skip(testingSize).batch(batchSize)
+testingDataSet = trainDataSet.take(testingSize).batch(batchSize)
+
+#Data Augmentation
+dataAugmentation = tf.keras.Sequential([
+    layers.RandomFlip("horizontal"),
+    layers.RandomRotation(0.1),
+    layers.RandomZoom(0.1),
+])
 
 #Build CNN Model
 trainingCNNModel = models.Sequential([
-    layers.Input(shape = (imageSize, imageSize, 3)),
-    layers.Conv2D(32, (3, 3), activation = "relu"),
+    dataAugmentation,
+    layers.Conv2D(32, (3, 3), activation = "relu", input_shape = (imageSize, imageSize, 3)),
     layers.MaxPooling2D(2, 2),
     layers.Conv2D(64, (3, 3), activation = "relu"),
     layers.MaxPooling2D(2, 2),
@@ -71,7 +79,7 @@ trainingCNNModel.compile(
 )
 
 #Train CNN Model
-trainingCNNModel.fit(trainDataSet, epochs = epochs)
+trainingCNNModel.fit(trainDataSet, validation_data = testingDataSet, epochs = epochs)
 
 #Save CNN Model
 saveCNNModelDirectory = os.path.join(trainingModelsDirectory, "CNN_Model_1.h5")
