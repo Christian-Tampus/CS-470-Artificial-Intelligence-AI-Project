@@ -11,6 +11,8 @@ print("[SYSTEM MESSAGE] Program Start!")
 
 #Import Dependencies
 import os
+import subprocess
+import sys
 import tensorflow as tf
 from tensorflow.keras import layers, models
 from pathlib import Path
@@ -18,7 +20,6 @@ from pathlib import Path
 #Declare Variables
 imageSize = 150
 batchSize = 32
-epochs = 5 #Try different epochs to improve accuracy, remember to record data
 currentDirectory = Path(__file__).resolve().parent
 catsDirectory = currentDirectory / "DataSets" / "TrainingSet" / "Cats"
 dogsDirectory = currentDirectory / "DataSets" / "TrainingSet" / "Dogs"
@@ -86,12 +87,26 @@ trainingCNNModel.compile(
     metrics = ["accuracy"]
 )
 
+#Display Epochs
+#Epochs Accuracy Test Results @ 2/20/2026
+#Epochs [5 = 46.88%, 6 = 68.75%, 7 = 62.5%, 8 = 68.75%, 9 = 78.12%, 10 = 78.12%, 11 = 75.0%, 12 = 81.25%, 13 = 84.38%, 14 = 81.25% 15 = 87.5%, 16 = 84.38%, 17 = 84.38%, 18 = 87.5%, 19 = 81.25%, 20 = 81.25%]
+#Epochs [1-5]: ~ <= 50%
+#Epochs [6-8]: ~60% - ~65%
+#Epochs [9-11]: ~70% - ~75%
+#Epochs [12-14]: ~80% - ~85%
+#Epochs [15-20]: ~85%
+epochs = 20
+print("[SYSTEM MESSAGE] Testing With Epochs:",epochs)
+
 #Train CNN Model
 trainingCNNModel.fit(trainDataSet, validation_data = testingDataSet, epochs = epochs)
 
 #Save CNN Model
 saveCNNModelDirectory = os.path.join(trainingModelsDirectory, "CNN_Model_1.h5")
 trainingCNNModel.save(saveCNNModelDirectory)
+
+#Execute test.py To Test Model
+subprocess.run([sys.executable, "test.py"])
 
 #Terminate Program
 print("[SYSTEM MESSAGE] Program Terminated...")
