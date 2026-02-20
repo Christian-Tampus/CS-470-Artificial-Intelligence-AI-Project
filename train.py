@@ -14,12 +14,12 @@ import os
 import subprocess
 import sys
 import tensorflow as tf
-from tensorflow.keras import layers, models, regularizers
+from tensorflow.keras import layers, models
 from pathlib import Path
 
 #Declare Variables
-imageSize = 180
-batchSize = 32
+imageSize = 224
+batchSize = 64
 currentDirectory = Path(__file__).resolve().parent
 catsDirectory = currentDirectory / "DataSets" / "TrainingSet" / "Cats"
 dogsDirectory = currentDirectory / "DataSets" / "TrainingSet" / "Dogs"
@@ -56,11 +56,8 @@ testingDataSet = dataSet.take(testingSize)
 #Data Augmentation
 dataAugmentation = tf.keras.Sequential([
     layers.RandomFlip("horizontal"),
-    layers.RandomRotation(0.2),
-    layers.RandomZoom(0.2),
-    layers.RandomContrast(0.15),
-    layers.RandomTranslation(0.15, 0.15),
-    layers.Resizing(imageSize, imageSize)
+    layers.RandomRotation(0.1),
+    layers.RandomZoom(0.1),
 ])
 
 #Prepare Datasets
@@ -70,21 +67,21 @@ testingDataSet = testingDataSet.batch(batchSize).prefetch(tf.data.AUTOTUNE)
 #Build CNN Model
 trainingCNNModel = models.Sequential([
     layers.Input(shape = (imageSize, imageSize, 3)),
-    layers.Conv2D(32, (3, 3), activation = "relu", kernel_regularizer = regularizers.l2(0.001)),
+    layers.Conv2D(32, (3, 3), activation = "relu"),
+    layers.BatchNormalization(),
+    layers.MaxPooling2D(2, 2),
+    layers.Dropout(0.1),
+    layers.Conv2D(64, (3, 3), activation = "relu"),
+    layers.BatchNormalization(),
+    layers.MaxPooling2D(2, 2),
+    layers.Dropout(0.1),
+    layers.Conv2D(128, (3, 3), activation = "relu"),
     layers.BatchNormalization(),
     layers.MaxPooling2D(2, 2),
     layers.Dropout(0.2),
-    layers.Conv2D(64, (3, 3), activation = "relu", kernel_regularizer = regularizers.l2(0.001)),
-    layers.BatchNormalization(),
-    layers.MaxPooling2D(2, 2),
-    layers.Dropout(0.2),
-    layers.Conv2D(128, (3, 3), activation = "relu", kernel_regularizer = regularizers.l2(0.001)),
-    layers.BatchNormalization(),
-    layers.MaxPooling2D(2, 2),
+    layers.GlobalAveragePooling2D(),
+    layers.Dense(128, activation = "relu"),
     layers.Dropout(0.3),
-    layers.Flatten(),
-    layers.Dense(128, activation = "relu", kernel_regularizer = regularizers.l2(0.001)),
-    layers.Dropout(0.5),
     layers.Dense(1, activation = "sigmoid")
 ])
 
@@ -95,23 +92,34 @@ trainingCNNModel.compile(
     metrics = ["accuracy", tf.keras.metrics.Precision(), tf.keras.metrics.Recall()]
 )
 
-#Callbacks: Learning Rate Reduction & Early Stopping
+#Callbacks
 learingRateReductionCallback = tf.keras.callbacks.ReduceLROnPlateau(
-    mointor = "val_loss", factor = 0.5, patience = 3, min_lr = 1e-6, verbose = 1
+    monitor = "val_loss",
+    factor = 0.5,
+    patience = 3,
+    min_lr = 1e-6,
+    verbose = 1
 )
 earlyStoppingCallback = tf.keras.callbacks.EarlyStopping(
-    monitor = "val_accuracy", patience = 5, restore_best_weights = True, verbose = 1
+    monitor = "val_accuracy",
+    patience = 10,
+    restore_best_weights = True,
+    verbose = 1
+)
+checkpoint = tf.keras.callbacks.ModelCheckpoint(
+    filepath = os.path.join(trainingModelsDirectory, "CNN_Model.h5"),
+    monitor = "val_accuracy",
+    save_best_only = True,
+    verbose = 1
 )
 
 #Train CNN Model
-epochs = 50
-print("[SYSTEM MESSAGE] Testing With Epochs:", epochs)
-
-trainingCNNModel.fit(trainDataSet, validation_data = testingDataSet, epochs = epochs, callbacks = [learingRateReductionCallback, earlyStoppingCallback])
-
-#Save CNN Model
-saveCNNModelDirectory = os.path.join(trainingModelsDirectory, "CNN_Model_1.h5")
-trainingCNNModel.save(saveCNNModelDirectory)
+trainingCNNModel.fit(
+    trainDataSet,
+    validation_data = testingDataSet,
+    epochs = 50,
+    callbacks = [learingRateReductionCallback, earlyStoppingCallback, checkpoint]
+)
 
 #Execute test.py To Test Model
 subprocess.run([sys.executable, "test.py"])

@@ -17,10 +17,10 @@ from PIL import Image
 from pathlib import Path
 
 #Declare Variables
-imageSize = 180
+imageSize = 224
 currentDirectory = Path(__file__).resolve().parent
 testingSetDirectory = currentDirectory / "DataSets" / "TestingSet"
-trainingCNNModelDirectory = currentDirectory / "TrainingModels" / "CNN_Model_1.h5"
+trainingCNNModelDirectory = currentDirectory / "TrainingModels" / "CNN_Model.h5"
 
 #Load CNN Model
 trainingCNNModel = tf.keras.models.load_model(trainingCNNModelDirectory)
