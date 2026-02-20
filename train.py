@@ -45,7 +45,7 @@ xTrainData = tf.convert_to_tensor(catImages + dogImages)
 yTrainData = tf.convert_to_tensor(catLabels + dogLabels)
 
 #Shuffle Dataset
-trainDataSet = tf.data.Dataset.from_tensor_slices((xTrainData, yTrainData)).shuffle(len(y))
+trainDataSet = tf.data.Dataset.from_tensor_slices((xTrainData, yTrainData)).shuffle(len(yTrainData)).batch(batchSize)
 
 #Normalize Images
 normalizationLayer = layers.Rescaling(1./255)
