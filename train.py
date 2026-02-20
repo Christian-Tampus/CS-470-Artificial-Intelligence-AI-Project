@@ -43,8 +43,8 @@ dogImages, dogLabels = loadImages(dogsDirectory, 1)
 xTrainData = tf.convert_to_tensor(catImages + dogImages)
 yTrainData = tf.convert_to_tensor(catLabels + dogLabels)
 
-#Load Dataset
-trainDataSet = tf.data.Dataset.from_tensor_slices((xTrainData, yTrainData)).shuffle(len(yTrainData)).batch(batchSize)
+#Shuffle Dataset
+trainDataSet = tf.data.Dataset.from_tensor_slices((xTrainData, yTrainData)).shuffle(len(y))
 
 #Normalize Images
 normalizationLayer = layers.Rescaling(1./255)
