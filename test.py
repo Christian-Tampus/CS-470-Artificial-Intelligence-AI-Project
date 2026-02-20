@@ -6,6 +6,7 @@
 #Assignment: Semester Project
 #==================================================
 
+#Start Program
 print("[SYSTEM MESSAGE] Program Start!")
 
 #Import Dependencies
@@ -40,4 +41,5 @@ for file in os.listdir(testingSetDirectory):
     result = predictImage(imagePath)
     print(f"[SYSTEM MESSAGE] Prediction For File: {file} Result: {result}")
 
+#Terminate Program
 print("[SYSTEM MESSAGE] Program Terminated...")

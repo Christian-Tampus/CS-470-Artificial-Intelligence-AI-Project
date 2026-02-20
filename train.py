@@ -6,6 +6,7 @@
 #Assignment: Semester Project
 #==================================================
 
+#Start Program
 print("[SYSTEM MESSAGE] Program Start!")
 
 #Import Dependencies
@@ -76,4 +77,5 @@ trainingCNNModel.fit(trainDataSet, epochs = epochs)
 saveCNNModelDirectory = os.path.join(trainingModelsDirectory, "CNN_Model_1.h5")
 trainingCNNModel.save(saveCNNModelDirectory)
 
+#Terminate Program
 print("[SYSTEM MESSAGE] Program Terminated...")
