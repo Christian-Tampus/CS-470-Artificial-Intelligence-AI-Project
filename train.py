@@ -18,6 +18,7 @@ from tensorflow.keras import layers, models
 from pathlib import Path
 
 #Declare Variables
+NEW_CNN_MODEL_VERSION = 2
 imageSize = 224
 batchSize = 64
 currentDirectory = Path(__file__).resolve().parent
@@ -107,7 +108,7 @@ earlyStoppingCallback = tf.keras.callbacks.EarlyStopping(
     verbose = 1
 )
 checkpoint = tf.keras.callbacks.ModelCheckpoint(
-    filepath = os.path.join(trainingModelsDirectory, "CNN_Model.h5"),
+    filepath = os.path.join(trainingModelsDirectory, "CNN_Model" + str(NEW_CNN_MODEL_VERSION) + ".h5"),
     monitor = "val_accuracy",
     save_best_only = True,
     verbose = 1
