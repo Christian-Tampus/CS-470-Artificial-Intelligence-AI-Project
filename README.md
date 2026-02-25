@@ -6,14 +6,14 @@ Project Goals
 3.	Complete Source Code Simple Comment Documentation [COMPLETED]
 4.	Improve Accuracy Up To 75+% Without Using Pre-Trained Models [COMPLETED]
 5.	First Update Of Detailed Documentation Below Of Every Single Line Of Code In Microsoft Word [COMPLETED]
-6.	Calculate True Positive Rate & Display In Standard Output (Print)
-7.	Calculate True Negative Rate & Display In Standard Output (Print)
-8.	Calculate False Positive Rate & Display In Standard Output (Print)
-9.	Calculate False Negative Rate & Display In Standard Output (Print)
-10.	Calculate Accuracy & Display In Standard Output (Print)
-11.	Calculate Precision & Display In Standard Output (Print)
-12.	Calculate Recall & Display In Standard Output (Print)
-13.	Calculate F1 Score & Display In Standard Output (Print)
+6.	Calculate True Positive Rate & Display In Standard Output (Print) [COMPLETED]
+7.	Calculate True Negative Rate & Display In Standard Output (Print) [COMPLETED]
+8.	Calculate False Positive Rate & Display In Standard Output (Print) [COMPLETED]
+9.	Calculate False Negative Rate & Display In Standard Output (Print) [COMPLETED]
+10.	Calculate Precision & Display In Standard Output (Print) [COMPLETED]
+11.	Calculate Recall & Display In Standard Output (Print) [COMPLETED]
+12.	Calculate F1 Score & Display In Standard Output (Print) [COMPLETED]
+13. Calculate Accuracy & Display In Standard Output (Print) [COMPLETED]
 14.	Display Confusion Matrix Using Matplotlib & Seaborn
 15.	Display Histogram Of TPR, TNR, FPR, FNR Using Matplotlib
 16.	Improve Accuracy Up To 90+% Using Pre-Trained Models
