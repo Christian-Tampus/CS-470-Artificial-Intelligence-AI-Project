@@ -1,4 +1,4 @@
-UPDATE VERSION [14]
+UPDATE VERSION [15]
 CS-470 Artificial Intelligence Project
 Multi-Class Image Classifier
 Project Goals
@@ -15,8 +15,8 @@ Project Goals
 11.	Calculate Recall & Display In Standard Output (Print) [COMPLETED]
 12.	Calculate F1 Score & Display In Standard Output (Print) [COMPLETED]
 13. Calculate Accuracy & Display In Standard Output (Print) [COMPLETED]
-14.	Display Confusion Matrix Using Matplotlib & Seaborn
-15.	Display Histogram Of TPR, TNR, FPR, FNR Using Matplotlib
+14.	Display Confusion Matrix Using Matplotlib & Seaborn [COMPLETED]
+15.	Display Histogram Of TPR, TNR, FPR, FNR Using Matplotlib [COMPLETED]
 16.	Improve Accuracy Up To 90+% Using Pre-Trained Models
 17.	Second Update Of Detailed Documentation Below Of Every Single Line Of Code In Microsoft Word [CHECKPOINT: MUST BE COMPLETED BEFORE FIRST PRESENTATION IN MARCH]
 18.	Implement Image Classification To 10 Different Image Types (Cats & Dogs Already Included) [IMPORANT: Make Sure That Each Image Type Has 2000 Total Images Inside A Folder & 1 Folder Of 400 Images Of Random Images, 80% Of Which Is Divided By 10 For Each Image Type, 20% Of Which Is None Of The Above Thus The Model Must Predict “Other”, Thus 32 Images Per Type, 80 “Other” Images]

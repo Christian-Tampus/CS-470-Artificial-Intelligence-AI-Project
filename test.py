@@ -1,4 +1,4 @@
-#UPDATE VERSION [14]
+#UPDATE VERSION [15]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -14,6 +14,8 @@ print("[SYSTEM MESSAGE] Test.py Program Start!")
 #Import Dependencies
 import os
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 import tensorflow as tf
 from PIL import Image
 from pathlib import Path
@@ -111,7 +113,58 @@ for key, value in confusionMatrixDataArray.items():
     print("[SYSTEM MESSAGE] F1 Score: " + str(round((2 * (precision * recall))/(precision + recall),decimalPlaces)))
     print("============================================================")
 print("[SYSTEM MESSAGE] Accuracy: " + accuracy + "%")
+print("[SYSTEM MESSAGE] Confusion Matrices: ",confusionMatrixDataArray)
 print("============================================================")
+
+#Display Confusion Matrix Subplots
+print("[SYSTEM MESSAGE] Displaying Confusion Matrix Subplots...")
+classNamesArray = ["Cat","Dog"]
+figureSizeX = 20
+figureSizeY = 10
+catConfusionMatrix = [
+    [confusionMatrixDataArray["cats"]["TN"], confusionMatrixDataArray["cats"]["FP"]],
+    [confusionMatrixDataArray["cats"]["FN"], confusionMatrixDataArray["cats"]["TP"]]
+]
+dogConfusionMatrix = [
+    [confusionMatrixDataArray["dogs"]["TN"], confusionMatrixDataArray["dogs"]["FP"]],
+    [confusionMatrixDataArray["dogs"]["FN"], confusionMatrixDataArray["dogs"]["TP"]]
+]
+figure, axes = plt.subplots(1, 2, figsize = (figureSizeX, figureSizeY))
+axes = axes.flatten()
+sns.heatmap(catConfusionMatrix, annot = True, fmt = "d", ax = axes[0], cmap = "flare", linewidths = 1, square = True, xticklabels = classNamesArray, yticklabels = classNamesArray)
+sns.heatmap(dogConfusionMatrix, annot = True, fmt = "d", ax = axes[1], cmap = "flare", linewidths = 1, square = True, xticklabels = classNamesArray, yticklabels = classNamesArray)
+axes[0].set_xlabel("Predicted Label")
+axes[0].set_ylabel("True Label")
+axes[1].set_xlabel("Predicted Label")
+axes[1].set_ylabel("True Label")
+axes[0].set_title("Cat Confusion Matrix [Cat = 0, Dog = 1]")
+axes[1].set_title("Dog Confusion Matrix [Cat = 1, Dog = 0]")
+plt.tight_layout()
+plt.show()
+print("[SYSTEM MESSAGE] Display Ended!")
+
+#Display Confusion Matrices Histogram
+print("[SYSTEM MESSAGE] Displaying Confusion Matrix Histogram...")
+labelsArray = ["Cat TP", "Cat TN", "Cat FP", "Cat FN", "Dog TP", "Dog TN", "Dog FP", "Dog FN"]
+frequencyArray = np.array([
+    confusionMatrixDataArray["cats"]["TP"],
+    confusionMatrixDataArray["cats"]["TN"],
+    confusionMatrixDataArray["cats"]["FP"],
+    confusionMatrixDataArray["cats"]["FN"],
+    confusionMatrixDataArray["dogs"]["TP"],
+    confusionMatrixDataArray["dogs"]["TN"],
+    confusionMatrixDataArray["dogs"]["FP"],
+    confusionMatrixDataArray["dogs"]["FN"],
+])
+frequencyArray = frequencyArray.flatten()
+colorsArray = ["green", "green", "red", "red", "green", "green", "red", "red"]
+plt.bar(labelsArray, frequencyArray, color = colorsArray)
+plt.ylabel = "Frequency"
+plt.title("Confusion Matrices Histogram")
+for index, value in enumerate(frequencyArray):
+    plt.text(index, value, str(value), ha = "center", va = "bottom")
+plt.show()
+print("[SYSTEM MESSAGE] Display Ended!")
 
 #Terminate Program
 print("[SYSTEM MESSAGE] Test.py Program Terminated...")
