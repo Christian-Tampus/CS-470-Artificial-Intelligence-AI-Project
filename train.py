@@ -65,7 +65,7 @@ dataAugmentation = tf.keras.Sequential([
     layers.RandomFlip("horizontal"),
     layers.RandomRotation(0.2), #Increased: 0.1 -> 0.2
     layers.RandomZoom(0.2), #Increased: 01. -> 0.2
-    layers.RandomConstrast(0.1), #New Constrast Adjustment
+    layers.RandomContrast(0.1), #New Contrast Adjustment
 ])
 
 #Prepare Datasets
