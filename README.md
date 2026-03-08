@@ -17,7 +17,7 @@ Project Goals
 13. Calculate Accuracy & Display In Standard Output (Print) [COMPLETED]
 14.	Display Confusion Matrix Using Matplotlib & Seaborn [COMPLETED]
 15.	Display Histogram Of TPR, TNR, FPR, FNR Using Matplotlib [COMPLETED]
-16.	Improve Accuracy Up To 90+% Using Pre-Trained Models
+16.	Improve Accuracy Up To 90+% Using Pre-Trained Models [COMPLETED]
 17.	Second Update Of Detailed Documentation Below Of Every Single Line Of Code In Microsoft Word [CHECKPOINT: MUST BE COMPLETED BEFORE FIRST PRESENTATION IN MARCH]
 18.	Implement Image Classification To 10 Different Image Types (Cats & Dogs Already Included) [IMPORANT: Make Sure That Each Image Type Has 2000 Total Images Inside A Folder & 1 Folder Of 400 Images Of Random Images, 80% Of Which Is Divided By 10 For Each Image Type, 20% Of Which Is None Of The Above Thus The Model Must Predict “Other”, Thus 32 Images Per Type, 80 “Other” Images]
 19.	Final Update Of Detailed Documentation Below Of Every Single Line Of Code In Microsoft Word
