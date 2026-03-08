@@ -71,8 +71,14 @@ dataAugmentation = tf.keras.Sequential([
 #Prepare Datasets
 #trainDataSet = trainDataSet.map(lambda x, y: (dataAugmentation(x, training = True), y)).shuffle(buffer_size = 1000).batch(batchSize).prefetch(tf.data.AUTOTUNE)
 #testingDataSet = testingDataSet.batch(batchSize).prefetch(tf.data.AUTOTUNE)
-trainDataSet = trainDataSet.map(lambda x, y: (preprocess_input(x), y)).shuffle(buffer_size = 1000).batch(batchSize).prefetch(tf.data.AUTOTUNE)
-testingDataSet = testingDataSet.map(lambda x, y: (preprocess_input(x), y)).batch(batchSize).prefetch(tf.data.AUTOTUNE)
+#Preprocessing Function
+def preprocess(x, y):
+    x = dataAugmentation(x, training = True)
+    x = preprocess_input(x)
+    return x, y
+
+trainDataSet = trainDataSet.map(preprocess).shuffle(1000).batch(batchSize).prefetch(tf.data.AUTOTUNE)  # NEW
+testingDataSet = testingDataSet.map(lambda x, y: (preprocess_input(x), y)).batch(batchSize).prefetch(tf.data.AUTOTUNE)  # NEW
 
 #New Base Model With EfficientNetB0 (Transfer Learning)
 efficientNetB0BaseModel = EfficientNetB0(
@@ -140,7 +146,7 @@ checkpoint = tf.keras.callbacks.ModelCheckpoint(
     verbose = 1
 )
 
-#Initial Training (New: Frozen Base)
+#Stage 1: Train Frozen Base
 trainingModel.fit(
     trainDataSet,
     validation_data = testingDataSet,
@@ -148,9 +154,9 @@ trainingModel.fit(
     callbacks = [learingRateReductionCallback, earlyStoppingCallback, checkpoint]
 )
 
-#Fine-Tuning: UnFreeze Top Layers Of Base Model (New)
+#Stage 2: Fine-Tune Top Layers
 efficientNetB0BaseModel.trainable = True
-for layer in efficientNetB0BaseModel.layers[:-20]: #New: Freeze First Layers, Unfreeze Top 20
+for layer in efficientNetB0BaseModel.layers[:-20]:
     layer.trainable = False
 
 #Recompile with lower learning rate for fine-tuning (NEW)
@@ -164,8 +170,8 @@ trainingModel.compile(
 trainingModel.fit(
     trainDataSet,
     validation_data=testingDataSet,
-    epochs=20,  #New: Fine-Tuning Epochs To 20
-    callbacks=[learingRateReductionCallback, earlyStoppingCallback, checkpoint]
+    epochs = 20,  #New: Fine-Tuning Epochs To 20
+    callbacks = [learingRateReductionCallback, earlyStoppingCallback, checkpoint]
 )
 
 #Execute test.py To Test Model

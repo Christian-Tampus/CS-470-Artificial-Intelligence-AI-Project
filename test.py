@@ -24,11 +24,11 @@ from pathlib import Path
 from tensorflow.keras.applications.efficientnet import preprocess_input  #New: EfficientNet Preprocessing
 
 #Declare Variables
-CURRENT_MODEL_VERSION = 2
+CURRENT_MODEL_VERSION = 3
 imageSize = 224
 currentDirectory = Path(__file__).resolve().parent
 testingSetDirectory = currentDirectory / "DataSets" / "TestingSet"
-trainingModelDirectory = currentDirectory / "TrainingModels" / ("CNN_Model" + str(CURRENT_MODEL_VERSION) + ".h5")
+trainingModelDirectory = currentDirectory / "TrainingModels" / ("Training_Model_" + str(CURRENT_MODEL_VERSION) + ".h5")
 
 #Load Model
 trainingModel = tf.keras.models.load_model(
