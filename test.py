@@ -1,4 +1,4 @@
-#UPDATE VERSION [20]
+#UPDATE VERSION [21]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -31,15 +31,12 @@ testingSetDirectory = currentDirectory / "DataSets" / "TestingSet"
 trainingModelDirectory = currentDirectory / "TrainingModels" / ("Training_Model_" + str(CURRENT_MODEL_VERSION) + ".h5")
 
 #Load Model
-trainingModel = tf.keras.models.load_model(
-    trainingModelDirectory,
-    custom_objects = {"<lambda>": preprocess_input}
-)
+trainingModel = tf.keras.models.load_model(trainingModelDirectory)
 
 #Predict Image Function
 def predictImage(directory):
     image = Image.open(directory).convert("RGB").resize((imageSize, imageSize))
-    imageArray = np.array(image) / 255.0
+    imageArray = np.array(image, dtype = np.float32)
     imageArray = preprocess_input(imageArray)
     imageArray = np.expand_dims(imageArray, axis = 0)
     prediction = trainingModel.predict(imageArray, verbose = 0)[0][0]
@@ -104,10 +101,22 @@ for file in os.listdir(testingSetDirectory):
 print("============================================================")
 accuracy = str(round((correctResults / testSize) * 100, decimalPlaces))
 for key, value in confusionMatrixDataArray.items():
-    value["TPR"] = value["TP"] / (value["TP"] + value["FN"])
-    value["TNR"] = value["TN"] / (value["TN"] + value["FP"])
-    value["FPR"] = value["FP"] / (value["TN"] + value["FP"])
-    value["FNR"] = value["FN"] / (value["TP"] + value["FN"])
+    if (value["TP"] + value["FN"]) != 0:
+        value["TPR"] = value["TP"] / (value["TP"] + value["FN"])
+    else:
+        value["TPR"] = 0
+    if (value["TN"] + value["FP"]) != 0:
+        value["TPR"] = value["TP"] / (value["TN"] + value["FP"])
+    else:
+        value["TNR"] = 0
+    if (value["TN"] + value["FP"]) != 0:
+        value["TPR"] = value["TP"] / (value["TN"] + value["FP"])
+    else:
+        value["FPR"] = 0
+    if (value["TP"] + value["FN"]) != 0:
+        value["TPR"] = value["TP"] / (value["TP"] + value["FN"])
+    else:
+        value["FPR"] = 0
     precision = value["TP"] / (value["TP"] + value["FP"])
     recall = value["TP"] / (value["TP"] + value["FN"])
     print("[SYSTEM MESSAGE] " + key.upper() + " Confusion Matrix Data:")
