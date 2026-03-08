@@ -1,4 +1,4 @@
-#UPDATE VERSION [17]
+#UPDATE VERSION [18]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -20,22 +20,29 @@ import tensorflow as tf
 from PIL import Image
 from pathlib import Path
 
+#New Dependencies For Pre-Trained Models
+from tensorflow.keras.applications.efficientnet import preprocess_input  #New: EfficientNet Preprocessing
+
 #Declare Variables
-CURRENT_MODEL_VERSION = 1
+CURRENT_MODEL_VERSION = 2
 imageSize = 224
 currentDirectory = Path(__file__).resolve().parent
 testingSetDirectory = currentDirectory / "DataSets" / "TestingSet"
-trainingCNNModelDirectory = currentDirectory / "TrainingModels" / ("CNN_Model" + str(CURRENT_MODEL_VERSION) + ".h5")
+trainingModelDirectory = currentDirectory / "TrainingModels" / ("CNN_Model" + str(CURRENT_MODEL_VERSION) + ".h5")
 
-#Load CNN Model
-trainingCNNModel = tf.keras.models.load_model(trainingCNNModelDirectory)
+#Load Model
+trainingModel = tf.keras.models.load_model(
+    trainingModelDirectory,
+    custom_objects = {"<lambda>": preprocess_input}
+)
 
 #Predict Image Function
 def predictImage(directory):
-    image = Image.open(directory).resize((imageSize, imageSize))
+    image = Image.open(directory).convert("RGB").resize((imageSize, imageSize))
     imageArray = np.array(image) / 255.0
+    imageArray = preprocess_input(imageArray)
     imageArray = np.expand_dims(imageArray, axis = 0)
-    prediction = trainingCNNModel.predict(imageArray, verbose = 0)[0][0]
+    prediction = trainingModel.predict(imageArray, verbose = 0)[0][0]
     if prediction > 0.5:
         return "Dog"
     return "Cat"

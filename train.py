@@ -1,4 +1,4 @@
-#UPDATE VERSION [17]
+#UPDATE VERSION [18]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -24,7 +24,7 @@ from tensorflow.keras.applications import EfficientNetB0
 from tensorflow.keras.applications.efficientnet import preprocess_input
 
 #Declare Variables
-NEW_MODEL_VERSION = 2
+NEW_MODEL_VERSION = 3
 imageSize = 224
 batchSize = 32 #Reduced batchSize: 64 -> 32
 currentDirectory = Path(__file__).resolve().parent
@@ -69,8 +69,10 @@ dataAugmentation = tf.keras.Sequential([
 ])
 
 #Prepare Datasets
-trainDataSet = trainDataSet.map(lambda x, y: (dataAugmentation(x, training = True), y)).shuffle(buffer_size = 1000).batch(batchSize).prefetch(tf.data.AUTOTUNE)
-testingDataSet = testingDataSet.batch(batchSize).prefetch(tf.data.AUTOTUNE)
+#trainDataSet = trainDataSet.map(lambda x, y: (dataAugmentation(x, training = True), y)).shuffle(buffer_size = 1000).batch(batchSize).prefetch(tf.data.AUTOTUNE)
+#testingDataSet = testingDataSet.batch(batchSize).prefetch(tf.data.AUTOTUNE)
+trainDataSet = trainDataSet.map(lambda x, y: (preprocess_input(x), y)).shuffle(buffer_size = 1000).batch(batchSize).prefetch(tf.data.AUTOTUNE)
+testingDataSet = testingDataSet.map(lambda x, y: (preprocess_input(x), y)).batch(batchSize).prefetch(tf.data.AUTOTUNE)
 
 #New Base Model With EfficientNetB0 (Transfer Learning)
 efficientNetB0BaseModel = EfficientNetB0(
@@ -83,7 +85,7 @@ efficientNetB0BaseModel.trainable = False #New: Freeze Base Layers For Initial T
 #Build Model
 trainingModel = models.Sequential([
     layers.Input(shape = (imageSize, imageSize, 3)),
-    layers.Lambda(preprocess_input), #New: Preprocess Inputs For EfficientNet
+    #layers.Lambda(preprocess_input), #New: Preprocess Inputs For EfficientNet
     efficientNetB0BaseModel, #New: Add EfficientNet As Feature Extractor
     layers.GlobalAveragePooling2D(),
     layers.Dropout(0.3),
@@ -132,7 +134,7 @@ earlyStoppingCallback = tf.keras.callbacks.EarlyStopping(
     verbose = 1
 )
 checkpoint = tf.keras.callbacks.ModelCheckpoint(
-    filepath = os.path.join(trainingModelsDirectory, "CNN_Model" + str(NEW_MODEL_VERSION) + ".h5"),
+    filepath = os.path.join(trainingModelsDirectory, "Training_Model_" + str(NEW_MODEL_VERSION) + ".h5"),
     monitor = "val_accuracy",
     save_best_only = True,
     verbose = 1
