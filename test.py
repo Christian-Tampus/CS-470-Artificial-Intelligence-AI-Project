@@ -1,4 +1,4 @@
-#UPDATE VERSION [15]
+#UPDATE VERSION [16]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -21,11 +21,11 @@ from PIL import Image
 from pathlib import Path
 
 #Declare Variables
-CURRENT_CNN_MODEL_VERSION = 1
+CURRENT_MODEL_VERSION = 1
 imageSize = 224
 currentDirectory = Path(__file__).resolve().parent
 testingSetDirectory = currentDirectory / "DataSets" / "TestingSet"
-trainingCNNModelDirectory = currentDirectory / "TrainingModels" / ("CNN_Model" + str(CURRENT_CNN_MODEL_VERSION) + ".h5")
+trainingCNNModelDirectory = currentDirectory / "TrainingModels" / ("CNN_Model" + str(CURRENT_MODEL_VERSION) + ".h5")
 
 #Load CNN Model
 trainingCNNModel = tf.keras.models.load_model(trainingCNNModelDirectory)
