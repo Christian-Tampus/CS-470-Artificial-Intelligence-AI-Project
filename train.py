@@ -1,4 +1,4 @@
-#UPDATE VERSION [19]
+#UPDATE VERSION [20]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -39,7 +39,7 @@ def loadImages(folder, label):
     for file in os.listdir(folder):
         imagePath = folder / file
         image = tf.keras.utils.load_img(imagePath, target_size = (imageSize, imageSize))
-        imageArray = tf.keras.utils.img_to_array(image) / 255.0
+        imageArray = tf.keras.utils.img_to_array(image)
         allImagesArray.append(imageArray)
         allLabelsArray.append(label)
     return allImagesArray, allLabelsArray
@@ -49,7 +49,7 @@ catImages, catLabels = loadImages(catsDirectory, 0)
 dogImages, dogLabels = loadImages(dogsDirectory, 1)
 
 #Combine & Convert To TensorFlow Dataset
-xTrainData = tf.convert_to_tensor(catImages + dogImages)
+xTrainData = tf.convert_to_tensor(catImages + dogImages, dtype = tf.float32)
 yTrainData = tf.convert_to_tensor(catLabels + dogLabels)
 
 #Shuffle Dataset

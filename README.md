@@ -1,4 +1,4 @@
-UPDATE VERSION [19]
+UPDATE VERSION [20]
 CS-470 Artificial Intelligence Project
 Multi-Class Image Classifier
 Project Goals
