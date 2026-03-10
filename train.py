@@ -1,4 +1,4 @@
-#UPDATE VERSION [21]
+#UPDATE VERSION [22]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -26,7 +26,7 @@ from tensorflow.keras.applications.efficientnet import preprocess_input
 #Declare Variables
 NEW_MODEL_VERSION = 3
 imageSize = 224
-batchSize = 32 #Reduced batchSize: 64 -> 32
+batchSize = 32
 currentDirectory = Path(__file__).resolve().parent
 catsDirectory = currentDirectory / "DataSets" / "TrainingSet" / "Cats"
 dogsDirectory = currentDirectory / "DataSets" / "TrainingSet" / "Dogs"
@@ -63,64 +63,43 @@ testingDataSet = dataSet.take(testingSize)
 #Data Augmentation (Improved Augmentation)
 dataAugmentation = tf.keras.Sequential([
     layers.RandomFlip("horizontal"),
-    layers.RandomRotation(0.2), #Increased: 0.1 -> 0.2
-    layers.RandomZoom(0.2), #Increased: 01. -> 0.2
-    layers.RandomContrast(0.1), #New Contrast Adjustment
+    layers.RandomRotation(0.2),
+    layers.RandomZoom(0.2),
+    layers.RandomContrast(0.1),
 ])
 
-#Prepare Datasets
-#trainDataSet = trainDataSet.map(lambda x, y: (dataAugmentation(x, training = True), y)).shuffle(buffer_size = 1000).batch(batchSize).prefetch(tf.data.AUTOTUNE)
-#testingDataSet = testingDataSet.batch(batchSize).prefetch(tf.data.AUTOTUNE)
 #Preprocessing Function
 def preprocess(x, y):
     x = dataAugmentation(x, training = True)
     x = preprocess_input(x)
     return x, y
 
-trainDataSet = trainDataSet.map(preprocess).shuffle(1000).batch(batchSize).prefetch(tf.data.AUTOTUNE)  # NEW
-testingDataSet = testingDataSet.map(lambda x, y: (preprocess_input(x), y)).batch(batchSize).prefetch(tf.data.AUTOTUNE)  # NEW
+#Prepare Datasets
+trainDataSet = trainDataSet.map(preprocess).shuffle(1000).batch(batchSize).prefetch(tf.data.AUTOTUNE)
+testingDataSet = testingDataSet.map(lambda x, y: (preprocess_input(x), y)).batch(batchSize).prefetch(tf.data.AUTOTUNE)
 
 #New Base Model With EfficientNetB0 (Transfer Learning)
 efficientNetB0BaseModel = EfficientNetB0(
-    include_top = False, #New: Remove Original Classification Head
+    include_top = False,
     input_shape = (imageSize, imageSize, 3),
-    weights = "imagenet" #New: Load Pretrained ImageNet Weights
+    weights = "imagenet"
 )
-efficientNetB0BaseModel.trainable = False #New: Freeze Base Layers For Initial Training
+efficientNetB0BaseModel.trainable = False
 
 #Build Model
 trainingModel = models.Sequential([
     layers.Input(shape = (imageSize, imageSize, 3)),
-    #layers.Lambda(preprocess_input), #New: Preprocess Inputs For EfficientNet
-    efficientNetB0BaseModel, #New: Add EfficientNet As Feature Extractor
+    efficientNetB0BaseModel,
     layers.GlobalAveragePooling2D(),
     layers.Dropout(0.3),
     layers.Dense(128, activation = "relu"),
     layers.Dropout(0.3),
     layers.Dense(1, activation = "sigmoid")
-    #Old Code
-    #layers.Input(shape = (imageSize, imageSize, 3)),
-    #layers.Conv2D(32, (3, 3), activation = "relu"),
-    #layers.BatchNormalization(),
-    #layers.MaxPooling2D(2, 2),
-    #layers.Dropout(0.1),
-    #layers.Conv2D(64, (3, 3), activation = "relu"),
-    #layers.BatchNormalization(),
-    #layers.MaxPooling2D(2, 2),
-    #layers.Dropout(0.1),
-    #layers.Conv2D(128, (3, 3), activation = "relu"),
-    #layers.BatchNormalization(),
-    #layers.MaxPooling2D(2, 2),
-    #layers.Dropout(0.2),
-    #layers.GlobalAveragePooling2D(),
-    #layers.Dense(128, activation = "relu"),
-    #layers.Dropout(0.3),
-    #layers.Dense(1, activation = "sigmoid")
 ])
 
 #Compile Model
 trainingModel.compile(
-    optimizer = tf.keras.optimizers.Adam(learning_rate = 1e-4), #New: Lower Learning Rate For Pretrained Network
+    optimizer = tf.keras.optimizers.Adam(learning_rate = 1e-4),
     loss = "binary_crossentropy",
     metrics = ["accuracy", tf.keras.metrics.Precision(), tf.keras.metrics.Recall()]
 )
@@ -150,7 +129,7 @@ checkpoint = tf.keras.callbacks.ModelCheckpoint(
 trainingModel.fit(
     trainDataSet,
     validation_data = testingDataSet,
-    epochs = 10, #New: Initial Training With Frozen Base (Changed Epochs: 50 -> 10)
+    epochs = 10,
     callbacks = [learingRateReductionCallback, earlyStoppingCallback, checkpoint]
 )
 
@@ -159,18 +138,18 @@ efficientNetB0BaseModel.trainable = True
 for layer in efficientNetB0BaseModel.layers[:-20]:
     layer.trainable = False
 
-#Recompile with lower learning rate for fine-tuning (NEW)
+#Recompile with lower learning rate for fine-tuning
 trainingModel.compile(
-    optimizer=tf.keras.optimizers.Adam(learning_rate=1e-5),  #New: Very Low Learning Rate For Fine-Tuning
+    optimizer=tf.keras.optimizers.Adam(learning_rate=1e-5),
     loss="binary_crossentropy",
     metrics=["accuracy", tf.keras.metrics.Precision(), tf.keras.metrics.Recall()]
 )
 
-#Fine-Tune Model (New)
+#Fine-Tune Model
 trainingModel.fit(
     trainDataSet,
     validation_data=testingDataSet,
-    epochs = 20,  #New: Fine-Tuning Epochs To 20
+    epochs = 20,
     callbacks = [learingRateReductionCallback, earlyStoppingCallback, checkpoint]
 )
 
