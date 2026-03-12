@@ -1,4 +1,4 @@
-#UPDATE VERSION [23]
+#UPDATE VERSION [24]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -28,10 +28,10 @@ CURRENT_MODEL_VERSION = 3
 imageSize = 224
 currentDirectory = Path(__file__).resolve().parent
 testingSetDirectory = currentDirectory / "DataSets" / "TestingSet"
-trainingModelDirectory = currentDirectory / "TrainingModels" / ("Training_Model_" + str(CURRENT_MODEL_VERSION) + ".h5")
+AIModelsDirectory = currentDirectory / "AIModels" / ("Training_Model_" + str(CURRENT_MODEL_VERSION) + ".h5")
 
 #Load Model
-trainingModel = tf.keras.models.load_model(trainingModelDirectory)
+AIModel = tf.keras.models.load_model(AIModelsDirectory)
 
 #Predict Image Function
 def predictImage(directory):
@@ -39,7 +39,7 @@ def predictImage(directory):
     imageArray = np.array(image, dtype = np.float32)
     imageArray = preprocess_input(imageArray)
     imageArray = np.expand_dims(imageArray, axis = 0)
-    prediction = trainingModel.predict(imageArray, verbose = 0)[0][0]
+    prediction = AIModel.predict(imageArray, verbose = 0)[0][0]
     if prediction > 0.5:
         return "Dog"
     return "Cat"

@@ -1,4 +1,4 @@
-#UPDATE VERSION [23]
+#UPDATE VERSION [24]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -30,7 +30,7 @@ batchSize = 32
 currentDirectory = Path(__file__).resolve().parent
 catsDirectory = currentDirectory / "DataSets" / "TrainingSet" / "Cats"
 dogsDirectory = currentDirectory / "DataSets" / "TrainingSet" / "Dogs"
-trainingModelsDirectory = os.path.join(currentDirectory, "TrainingModels")
+AIModelsDirectory = os.path.join(currentDirectory, "AIModels")
 
 #Load Images Function
 def loadImages(folder, label):
@@ -119,7 +119,7 @@ earlyStoppingCallback = tf.keras.callbacks.EarlyStopping(
     verbose = 1
 )
 checkpoint = tf.keras.callbacks.ModelCheckpoint(
-    filepath = os.path.join(trainingModelsDirectory, "Training_Model_" + str(NEW_MODEL_VERSION) + ".h5"),
+    filepath = os.path.join(AIModelsDirectory, "Training_Model_" + str(NEW_MODEL_VERSION) + ".h5"),
     monitor = "val_accuracy",
     save_best_only = True,
     verbose = 1
