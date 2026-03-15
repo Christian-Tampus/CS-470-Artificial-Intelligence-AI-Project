@@ -1,4 +1,4 @@
-#UPDATE VERSION [26]
+#UPDATE VERSION [27]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -51,7 +51,11 @@ AIModel = tf.keras.models.load_model(AIModelsDirectory)
 #Predict Image Function
 #==================================================
 def predictImage(directory):
-    image = Image.open(directory).convert("RGB").resize((imageSize, imageSize))
+    try:
+        image = Image.open(directory).convert("RGB").resize((imageSize, imageSize))
+    except Exception as error:
+        print("[SYSTEM ERROR] Exception Error: ", error, " File Path: ", directory)
+        return None, None
     imageArray = np.array(image, dtype = np.float32)
     imageArray = preprocess_input(imageArray)
     imageArray = np.expand_dims(imageArray, axis = 0)
@@ -79,6 +83,8 @@ for classIndex, className in enumerate(classNames):
     for file in os.listdir(classFolder):
         imagePath = classFolder / file
         predictedClass, confidence = predictImage(imagePath)
+        if predictedClass is None:
+            continue
         predictedIndex = classNames.index(predictedClass)
         trueLabels.append(classIndex)
         predictedLabels.append(predictedIndex)

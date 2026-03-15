@@ -1,4 +1,4 @@
-#UPDATE VERSION [26]
+#UPDATE VERSION [27]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -53,8 +53,12 @@ def loadImages():
         classFolder = trainingSetDirectory / className
         for file in os.listdir(classFolder):
             imagePath = classFolder / file
-            image = tf.keras.utils.load_img(imagePath, target_size = (imageSize, imageSize))
-            imageArray = tf.keras.utils.img_to_array(image)
+            try:
+                image = tf.keras.utils.load_img(imagePath, target_size = (imageSize, imageSize))
+                imageArray = tf.keras.utils.img_to_array(image)
+            except Exception as error:
+                print("[SYSTEM ERROR] Exception Error: ", error, " File Path: ", imagePath)
+                continue
             allImagesArray.append(imageArray)
             allLabelsArray.append(classLabel)
     return allImagesArray, allLabelsArray
