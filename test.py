@@ -1,4 +1,4 @@
-#UPDATE VERSION [31]
+#UPDATE VERSION [32]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -74,6 +74,14 @@ DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL_DIRECTORY = currentDirectory / "AIModels" /
 #==================================================
 MAIN_CLASSIFIER_CLASS_NAMES = sorted(os.listdir(MAIN_CLASSIFIER_TESTING_SET_DIRECTORY))
 MAIN_CLASSIFIER_CLASS_QUANTITY = len(MAIN_CLASSIFIER_CLASS_NAMES)
+CAR_MODEL_ANALYZER_CLASS_NAMES = sorted(os.listdir(CAR_MODEL_ANALYZER_TESTING_SET_DIRECTORY))
+CAR_MODEL_ANALYZER_CLASS_QUANTITY = len(CAR_MODEL_ANALYZER_CLASS_NAMES)
+CAT_BREED_ANALYZER_CLASS_NAMES = sorted(os.listdir(CAT_BREED_ANALYZER_MODEL_TESTING_SET_DIRECTORY))
+CAT_BREED_ANALYZER_CLASS_QUANTITY = len(CAT_BREED_ANALYZER_CLASS_NAMES)
+DOG_BREED_ANALYZER_CLASS_NAMES = sorted(os.listdir(DOG_BREED_ANALYZER_MODEL_TESTING_SET_DIRECTORY))
+DOG_BREED_ANALYZER_CLASS_QUANTITY = len(DOG_BREED_ANALYZER_CLASS_NAMES)
+print("[SYSTEM MESSAGE] Detected Classes: ", MAIN_CLASSIFIER_CLASS_NAMES)
+print("[SYSTEM MESSAGE] Number Of Classes: ", MAIN_CLASSIFIER_CLASS_QUANTITY)
 print("[SYSTEM MESSAGE] Detected Classes: ", MAIN_CLASSIFIER_CLASS_NAMES)
 print("[SYSTEM MESSAGE] Number Of Classes: ", MAIN_CLASSIFIER_CLASS_QUANTITY)
 
@@ -155,19 +163,19 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
             case "Cars":
                 print("[SYSTEM MESSAGE] Analyzing Car Model...")
                 attributeLabel = " Attribute [Car Model]: "
-                analysisAttribute, analysisConfidence = analyzeImage(imagePath, CAR_MODEL_ANALYZER_MODEL, CAR_MODEL_ANALYZER_TESTING_SET_DIRECTORY)
+                analysisAttribute, analysisConfidence = analyzeImage(imagePath, CAR_MODEL_ANALYZER_MODEL, CAR_MODEL_ANALYZER_CLASS_NAMES)
                 if analysisAttribute is None:
                     continue
             case "Cats":
                 print("[SYSTEM MESSAGE] Analyzing Cat Breed...")
                 attributeLabel = " Attribute [Cat Breed]: "
-                analysisAttribute, analysisConfidence = analyzeImage(imagePath, CAT_BREED_ANALYZER_MODEL, CAT_BREED_ANALYZER_MODEL_TESTING_SET_DIRECTORY)
+                analysisAttribute, analysisConfidence = analyzeImage(imagePath, CAT_BREED_ANALYZER_MODEL, CAT_BREED_ANALYZER_CLASS_NAMES)
                 if analysisAttribute is None:
                     continue
             case "Dogs":
                 print("[SYSTEM MESSAGE] Analyzing Dog Breed...")
                 attributeLabel = " Attribute [Dog Breed]: "
-                analysisAttribute, analysisConfidence = analyzeImage(imagePath, DOG_BREED_ANALYZER_MODEL, DOG_BREED_ANALYZER_MODEL_TESTING_SET_DIRECTORY)
+                analysisAttribute, analysisConfidence = analyzeImage(imagePath, DOG_BREED_ANALYZER_MODEL, DOG_BREED_ANALYZER_CLASS_NAMES)
                 if analysisAttribute is None:
                     continue
             case _:
