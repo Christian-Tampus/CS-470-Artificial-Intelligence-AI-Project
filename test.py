@@ -22,7 +22,7 @@ import tensorflow as tf
 from PIL import Image
 from pathlib import Path
 from tensorflow.keras.applications.efficientnet import preprocess_input
-from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 
 #==================================================
 #Declare Variables
@@ -90,6 +90,7 @@ for classIndex, className in enumerate(classNames):
 print("============================================================")
 accuracy = round(accuracy_score(trueLabels, predictedLabels), 2)
 print("[SYSTEM MESSAGE] Accuracy: " + str(accuracy) + "%")
+print("[SYSTEM MESSAGE] Classification Report: ",classification_report(trueLabels, predictedLabels, target_names = classNames))
 
 #==================================================
 #Confusion Matrix
