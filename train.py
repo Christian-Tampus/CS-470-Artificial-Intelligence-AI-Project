@@ -1,4 +1,4 @@
-#UPDATE VERSION [27]
+#UPDATE VERSION [28]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -134,7 +134,7 @@ trainingModel = models.Sequential([
 trainingModel.compile(
     optimizer = tf.keras.optimizers.Adam(learning_rate = 1e-4),
     loss = "sparse_categorical_crossentropy", #binary_crossentropy => binary classification, sparse_categorical_crossentropy => mutl-class classification
-    metrics = ["accuracy", tf.keras.metrics.Precision(), tf.keras.metrics.Recall()]
+    metrics = ["accuracy"]
 )
 #==================================================
 #Callbacks
@@ -181,7 +181,7 @@ for layer in efficientNetB0BaseModel.layers[:-20]:
 trainingModel.compile(
     optimizer = tf.keras.optimizers.Adam(learning_rate = 1e-5),
     loss = "sparse_categorical_crossentropy", #binary_crossentropy => binary classification, sparse_categorical_crossentropy => mutl-class classification
-    metrics = ["accuracy", tf.keras.metrics.Precision(), tf.keras.metrics.Recall()]
+    metrics = ["accuracy"]
 )
 
 #==================================================
