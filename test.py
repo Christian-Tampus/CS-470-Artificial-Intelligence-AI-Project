@@ -1,4 +1,4 @@
-#UPDATE VERSION [25]
+#UPDATE VERSION [26]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -27,7 +27,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score, classification_rep
 #==================================================
 #Declare Variables
 #==================================================
-CURRENT_MODEL_VERSION = 3
+CURRENT_MODEL_VERSION = 4
 imageSize = 224
 currentDirectory = Path(__file__).resolve().parent
 testingSetDirectory = currentDirectory / "DataSets" / "TestingSet"
@@ -39,7 +39,7 @@ AIModelsDirectory = currentDirectory / "AIModels" / ("Training_Model_" + str(CUR
 #==================================================
 classNames = sorted(os.listdir(trainingSetDirectory))
 classQuantity = len(classNames)
-print("[SYSTEM MESSAGE] Classes: ", classNames)
+print("[SYSTEM MESSAGE] Detected Classes: ", classNames)
 print("[SYSTEM MESSAGE] Number Of Classes: ", classQuantity)
 
 #==================================================

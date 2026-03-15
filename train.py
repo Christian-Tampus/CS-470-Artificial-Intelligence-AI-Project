@@ -1,4 +1,4 @@
-#UPDATE VERSION [25]
+#UPDATE VERSION [26]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -28,7 +28,7 @@ from tensorflow.keras.applications.efficientnet import preprocess_input
 #==================================================
 #Declare Variables
 #==================================================
-NEW_MODEL_VERSION = 3
+NEW_MODEL_VERSION = 4
 imageSize = 224
 batchSize = 32
 currentDirectory = Path(__file__).resolve().parent
@@ -40,7 +40,7 @@ AIModelsDirectory = os.path.join(currentDirectory, "AIModels")
 #==================================================
 classNames = sorted(os.listdir(trainingSetDirectory))
 classQuantity = len(classNames)
-print("[SYSTEM MESSAGE] Classes: ", classNames)
+print("[SYSTEM MESSAGE] Detected Classes: ", classNames)
 print("[SYSTEM MESSAGE] Number Of Classes: ", classQuantity)
 
 #==================================================
@@ -62,7 +62,9 @@ def loadImages():
 #==================================================
 #Load All Class Images
 #==================================================
+print("[SYSTEM MESSAGE] Loading Images...")
 xImages, yLabels = loadImages()
+print("[SYSTEM MESSAGE] Images Loaded!")
 
 #==================================================
 #Prepare Datasets
