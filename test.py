@@ -1,4 +1,4 @@
-#UPDATE VERSION [33]
+#UPDATE VERSION [34]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -180,6 +180,13 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
         attributeLabel = ""
         analysisAttribute = ""
         analysisConfidence = ""
+        classValue = file.split("_")[0]
+        if classValue == "Car":
+            ATTRIBUTE_ACCURACY["CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL"]["Total"] += 1
+        elif classValue == "Cat":
+            ATTRIBUTE_ACCURACY["CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]["Total"] += 1
+        elif classValue == "Dog":
+            ATTRIBUTE_ACCURACY["DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]["Total"] += 1
         match classificationClass:
             case "Cars":
                 print("[SYSTEM MESSAGE] Analyzing Car Model...")
@@ -190,7 +197,6 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
                 attributeValue = file.split("_")[1]
                 if attributeValue == analysisAttribute:
                     ATTRIBUTE_ACCURACY["CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL"]["Predicted"] += 1
-                ATTRIBUTE_ACCURACY["CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL"]["Total"] += 1
             case "Cats":
                 print("[SYSTEM MESSAGE] Analyzing Cat Breed...")
                 attributeLabel = " Attribute [Cat Breed]: "
@@ -200,7 +206,6 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
                 attributeValue = file.split("_")[1]
                 if attributeValue == analysisAttribute:
                     ATTRIBUTE_ACCURACY["CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]["Predicted"] += 1
-                ATTRIBUTE_ACCURACY["CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]["Total"] += 1
             case "Dogs":
                 print("[SYSTEM MESSAGE] Analyzing Dog Breed...")
                 attributeLabel = " Attribute [Dog Breed]: "
@@ -210,7 +215,6 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
                 attributeValue = file.split("_")[1]
                 if attributeValue == analysisAttribute:
                     ATTRIBUTE_ACCURACY["DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]["Predicted"] += 1
-                ATTRIBUTE_ACCURACY["DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]["Total"] += 1
             case _:
                 print("[SYSTEM MESSAGE] Unknown Class")
         print("[SYSTEM MESSAGE] [CLASSIFICATION] Image: ", file," Predicted Classification: ", classificationClass, " Actual Classification: ", className, " Confidence: ", round(classificationConfidence * 100, 2)," %")
@@ -222,7 +226,7 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
 #==================================================
 classificationAccuracy = round(accuracy_score(classificationTrueLabels, classificationPredictedLabels) * 100, 2)
 print("[SYSTEM MESSAGE] Classification Accuracy: " + str(classificationAccuracy) + "%")
-print("[SYSTEM MESSAGE] Classification Report: ",classification_report(classificationTrueLabels, classificationPredictedLabels, target_names = MAIN_CLASSIFIER_CLASS_NAMES))
+print("[SYSTEM MESSAGE] Classification Report:\n",classification_report(classificationTrueLabels, classificationPredictedLabels, target_names = MAIN_CLASSIFIER_CLASS_NAMES))
 
 #==================================================
 #Classification Confusion Matrix
