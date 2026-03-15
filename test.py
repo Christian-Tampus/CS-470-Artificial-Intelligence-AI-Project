@@ -1,4 +1,4 @@
-#UPDATE VERSION [28]
+#UPDATE VERSION [29]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -59,7 +59,7 @@ def predictImage(directory):
     imageArray = np.array(image, dtype = np.float32)
     imageArray = preprocess_input(imageArray)
     imageArray = np.expand_dims(imageArray, axis = 0)
-    predictions = AIModel.predict(imageArray, verbos = 0)[0]
+    predictions = AIModel.predict(imageArray, verbose = 0)[0]
     predictedIndex = np.argmax(predictions)
     predictedClass = classNames[predictedIndex]
     confidence = predictions[predictedIndex]
@@ -77,6 +77,7 @@ predictedLabels = []
 print("============================================================")
 print("[SYSTEM MESSAGE] Prediction Start!")
 for classIndex, className in enumerate(classNames):
+    print("[SYSTEM MESSAGE] Prediction Start For Class: ",className)
     classFolder = testingSetDirectory / className
     if not os.path.isdir(classFolder):
         continue
@@ -89,12 +90,12 @@ for classIndex, className in enumerate(classNames):
         trueLabels.append(classIndex)
         predictedLabels.append(predictedIndex)
         print(f"[SYSTEM MESSAGE] File: {file} | Actual: {className} | Prediction: {predictedClass} | Confidence: {confidence:.4f}")
+    print("============================================================")
 
 #==================================================
 #Accuracy
 #==================================================
-print("============================================================")
-accuracy = round(accuracy_score(trueLabels, predictedLabels), 2)
+accuracy = round(accuracy_score(trueLabels, predictedLabels) * 100, 2)
 print("[SYSTEM MESSAGE] Accuracy: " + str(accuracy) + "%")
 print("[SYSTEM MESSAGE] Classification Report: ",classification_report(trueLabels, predictedLabels, target_names = classNames))
 
