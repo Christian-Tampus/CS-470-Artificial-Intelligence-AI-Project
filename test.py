@@ -1,4 +1,4 @@
-#UPDATE VERSION [24]
+#UPDATE VERSION [25]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -11,7 +11,9 @@
 #Start Program
 print("[SYSTEM MESSAGE] Test.py Program Start!")
 
+#==================================================
 #Import Dependencies
+#==================================================
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -19,168 +21,93 @@ import seaborn as sns
 import tensorflow as tf
 from PIL import Image
 from pathlib import Path
+from tensorflow.keras.applications.efficientnet import preprocess_input
+from sklearn.metrics import confusion_matrix, accuracy_score
 
-#New Dependencies For Pre-Trained Models
-from tensorflow.keras.applications.efficientnet import preprocess_input  #New: EfficientNet Preprocessing
-
+#==================================================
 #Declare Variables
+#==================================================
 CURRENT_MODEL_VERSION = 3
 imageSize = 224
 currentDirectory = Path(__file__).resolve().parent
 testingSetDirectory = currentDirectory / "DataSets" / "TestingSet"
+trainingSetDirectory = currentDirectory / "DataSets" / "TrainingSet"
 AIModelsDirectory = currentDirectory / "AIModels" / ("Training_Model_" + str(CURRENT_MODEL_VERSION) + ".h5")
 
+#==================================================
+#Detect & Display Classes
+#==================================================
+classNames = sorted(os.listdir(trainingSetDirectory))
+classQuantity = len(classNames)
+print("[SYSTEM MESSAGE] Classes: ", classNames)
+print("[SYSTEM MESSAGE] Number Of Classes: ", classQuantity)
+
+#==================================================
 #Load Model
+#==================================================
 AIModel = tf.keras.models.load_model(AIModelsDirectory)
 
+#==================================================
 #Predict Image Function
+#==================================================
 def predictImage(directory):
     image = Image.open(directory).convert("RGB").resize((imageSize, imageSize))
     imageArray = np.array(image, dtype = np.float32)
     imageArray = preprocess_input(imageArray)
     imageArray = np.expand_dims(imageArray, axis = 0)
-    prediction = AIModel.predict(imageArray, verbose = 0)[0][0]
-    if prediction > 0.5:
-        return "Dog"
-    return "Cat"
+    predictions = AIModel.predict(imageArray, verbos = 0)[0]
+    predictedIndex = np.argmax(predictions)
+    predictedClass = classNames[predictedIndex]
+    confidence = predictions[predictedIndex]
+    return predictedClass, confidence
 
-#Declare Result Variables
-decimalPlaces = 4
-correctResults = 0
-testSize = 0
-confusionMatrixDataArray = {
-    "cats": {
-        "TPR": 0,
-        "TNR": 0,
-        "FPR": 0,
-        "FNR": 0,
-        "TP": 0,
-        "TN": 0,
-        "FP": 0,
-        "FN": 0,
-    },
-    "dogs": {
-        "TPR": 0,
-        "TNR": 0,
-        "FPR": 0,
-        "FNR": 0,
-        "TP": 0,
-        "TN": 0,
-        "FP": 0,
-        "FN": 0,
-    },
-}
+#==================================================
+#Prediction Variables
+#==================================================
+trueLabels = []
+predictedLabels = []
 
-#Test CNN Model
+#==================================================
+#Predict Testing Set
+#==================================================
 print("============================================================")
 print("[SYSTEM MESSAGE] Prediction Start!")
-for file in os.listdir(testingSetDirectory):
-    testSize += 1
-    imagePath = testingSetDirectory / file
-    result = predictImage(imagePath).lower()
-    fileName = file.lower().removesuffix(".jpg")
-    print(f"[SYSTEM MESSAGE] Prediction For File: {fileName} Result: {result}")
-    if "cat" in fileName:
-        if result == "cat":
-            confusionMatrixDataArray["cats"]["TP"] += 1
-            confusionMatrixDataArray["dogs"]["TN"] += 1
-        elif result == "dog":
-            confusionMatrixDataArray["cats"]["FN"] += 1
-            confusionMatrixDataArray["dogs"]["FP"] += 1
-    if "dog" in fileName:
-        if result == "dog":
-            confusionMatrixDataArray["dogs"]["TP"] += 1
-            confusionMatrixDataArray["cats"]["TN"] += 1
-        elif result == "cat":
-            confusionMatrixDataArray["dogs"]["FN"] += 1
-            confusionMatrixDataArray["cats"]["FP"] += 1
-    if "dog" in fileName and result == "dog" or "cat" in fileName and result == "cat":
-        correctResults += 1
+for classIndex, className in enumerate(classNames):
+    classFolder = testingSetDirectory / className
+    if not os.path.isdir(classFolder):
+        continue
+    for file in os.listdir(classFolder):
+        imagePath = classFolder / file
+        predictedClass, confidence = predictImage(imagePath)
+        predictedIndex = classNames.index(predictedClass)
+        trueLabels.append(classIndex)
+        predictedLabels.append(predictedIndex)
+        print(f"[SYSTEM MESSAGE] File: {file} | Actual: {className} | Prediction: {predictedClass} | Confidence: {confidence:.4f}")
 
-#Calculate Results
+#==================================================
+#Accuracy
+#==================================================
 print("============================================================")
-accuracy = str(round((correctResults / testSize) * 100, decimalPlaces))
-for key, value in confusionMatrixDataArray.items():
-    if (value["TP"] + value["FN"]) != 0:
-        value["TPR"] = value["TP"] / (value["TP"] + value["FN"])
-    else:
-        value["TPR"] = 0
-    if (value["TN"] + value["FP"]) != 0:
-        value["TPR"] = value["TP"] / (value["TN"] + value["FP"])
-    else:
-        value["TNR"] = 0
-    if (value["TN"] + value["FP"]) != 0:
-        value["TPR"] = value["TP"] / (value["TN"] + value["FP"])
-    else:
-        value["FPR"] = 0
-    if (value["TP"] + value["FN"]) != 0:
-        value["TPR"] = value["TP"] / (value["TP"] + value["FN"])
-    else:
-        value["FPR"] = 0
-    precision = value["TP"] / (value["TP"] + value["FP"])
-    recall = value["TP"] / (value["TP"] + value["FN"])
-    print("[SYSTEM MESSAGE] " + key.upper() + " Confusion Matrix Data:")
-    print("[SYSTEM MESSAGE] True Positive Rate: " + str(round(value["TPR"], decimalPlaces)))
-    print("[SYSTEM MESSAGE] True Negative Rate: " + str(round(value["TNR"], decimalPlaces)))
-    print("[SYSTEM MESSAGE] False Positive Rate: " + str(round(value["FPR"], decimalPlaces)))
-    print("[SYSTEM MESSAGE] False Negative Rate: " + str(round(value["FNR"], decimalPlaces)))
-    print("[SYSTEM MESSAGE] Precision: " + str(round(precision, decimalPlaces)))
-    print("[SYSTEM MESSAGE] Recall: " + str(round(recall, decimalPlaces)))
-    print("[SYSTEM MESSAGE] F1 Score: " + str(round((2 * (precision * recall))/(precision + recall),decimalPlaces)))
-    print("============================================================")
-print("[SYSTEM MESSAGE] Accuracy: " + accuracy + "%")
-print("[SYSTEM MESSAGE] Confusion Matrices: ",confusionMatrixDataArray)
-print("============================================================")
+accuracy = round(accuracy_score(trueLabels, predictedLabels), 2)
+print("[SYSTEM MESSAGE] Accuracy: " + str(accuracy) + "%")
 
-#Display Confusion Matrix Subplots
-print("[SYSTEM MESSAGE] Displaying Confusion Matrix Subplots...")
-classNamesArray = ["Cat","Dog"]
-figureSizeX = 20
-figureSizeY = 10
-catConfusionMatrix = [
-    [confusionMatrixDataArray["cats"]["TN"], confusionMatrixDataArray["cats"]["FP"]],
-    [confusionMatrixDataArray["cats"]["FN"], confusionMatrixDataArray["cats"]["TP"]]
-]
-dogConfusionMatrix = [
-    [confusionMatrixDataArray["dogs"]["TN"], confusionMatrixDataArray["dogs"]["FP"]],
-    [confusionMatrixDataArray["dogs"]["FN"], confusionMatrixDataArray["dogs"]["TP"]]
-]
-figure, axes = plt.subplots(1, 2, figsize = (figureSizeX, figureSizeY))
-axes = axes.flatten()
-sns.heatmap(catConfusionMatrix, annot = True, fmt = "d", ax = axes[0], cmap = "flare", linewidths = 1, square = True, xticklabels = classNamesArray, yticklabels = classNamesArray)
-sns.heatmap(dogConfusionMatrix, annot = True, fmt = "d", ax = axes[1], cmap = "flare", linewidths = 1, square = True, xticklabels = classNamesArray, yticklabels = classNamesArray)
-axes[0].set_xlabel("Predicted Label")
-axes[0].set_ylabel("True Label")
-axes[1].set_xlabel("Predicted Label")
-axes[1].set_ylabel("True Label")
-axes[0].set_title("Cat Confusion Matrix [Cat = 0, Dog = 1]")
-axes[1].set_title("Dog Confusion Matrix [Cat = 1, Dog = 0]")
+#==================================================
+#Confusion Matrix
+#==================================================
+confusionMatrix = confusion_matrix(trueLabels, predictedLabels)
+
+#==================================================
+#Display Confusion Matrix
+#==================================================
+plt.figure(figsize = (8, 6))
+sns.heatmap(confusionMatrix, annot = True, fmt = "d", cmap = "Blues", xticklabels = classNames, yticklabels = classNames)
+plt.title("Confusion Matrix")
+plt.xlabel("Predicted Label")
+plt.ylabel("True Label")
 plt.tight_layout()
 plt.show()
-print("[SYSTEM MESSAGE] Display Ended!")
 
-#Display Confusion Matrices Histogram
-print("[SYSTEM MESSAGE] Displaying Confusion Matrix Histogram...")
-labelsArray = ["Cat TP", "Cat TN", "Cat FP", "Cat FN", "Dog TP", "Dog TN", "Dog FP", "Dog FN"]
-frequencyArray = np.array([
-    confusionMatrixDataArray["cats"]["TP"],
-    confusionMatrixDataArray["cats"]["TN"],
-    confusionMatrixDataArray["cats"]["FP"],
-    confusionMatrixDataArray["cats"]["FN"],
-    confusionMatrixDataArray["dogs"]["TP"],
-    confusionMatrixDataArray["dogs"]["TN"],
-    confusionMatrixDataArray["dogs"]["FP"],
-    confusionMatrixDataArray["dogs"]["FN"],
-])
-frequencyArray = frequencyArray.flatten()
-colorsArray = ["green", "green", "red", "red", "green", "green", "red", "red"]
-plt.bar(labelsArray, frequencyArray, color = colorsArray)
-plt.ylabel = "Frequency"
-plt.title("Confusion Matrices Histogram")
-for index, value in enumerate(frequencyArray):
-    plt.text(index, value, str(value), ha = "center", va = "bottom")
-plt.show()
-print("[SYSTEM MESSAGE] Display Ended!")
-
+#==================================================
 #Terminate Program
+#==================================================
 print("[SYSTEM MESSAGE] Test.py Program Terminated...")
