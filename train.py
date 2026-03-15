@@ -1,4 +1,4 @@
-#UPDATE VERSION [29]
+#UPDATE VERSION [30]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -26,27 +26,56 @@ from tensorflow.keras.applications import EfficientNetB0
 from tensorflow.keras.applications.efficientnet import preprocess_input
 
 #==================================================
-#Declare Variables
+#Model Variables
 #==================================================
-NEW_MODEL_VERSION = 4
+MODEL_NAMES = {
+    "MAIN_CLASSIFIER_MODEL": "MAIN_CLASSIFIER_MODEL_VERSION_",
+    "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
+    "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
+    "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
+}
+
+#==================================================
+#Model Versions
+#==================================================
+MODEL_VERSIONS = {
+    "MAIN_CLASSIFIER_MODEL": 4,
+    "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": 1,
+    "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 1,
+    "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 1,
+}
+
+#==================================================
+#Model Training Set Directories
+#==================================================
+MODEL_TRAINING_SET_DIRECTORIES = {
+    "MAIN_CLASSIFIER_MODEL": "DataSets" / "TrainingSet",
+    "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": "DataSets" / "AttributeTrainingSet" / "Cars",
+    "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": "DataSets" / "AttributeTrainingSet" / "Cats",
+    "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": "DataSets" / "AttributeTrainingSet" / "Dogs",
+}
+
+#==================================================
+#Train Models
+#==================================================
+TRAIN_MODELS = {
+    "MAIN_CLASSIFIER_MODEL": False,
+    "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": True,
+    "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": True,
+    "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": True,
+}
+
+#==================================================
+#Global Variables
+#==================================================
 imageSize = 224
 batchSize = 32
 currentDirectory = Path(__file__).resolve().parent
-trainingSetDirectory = currentDirectory / "DataSets" / "TrainingSet"
-AIModelsDirectory = os.path.join(currentDirectory, "AIModels")
-
-#==================================================
-#Detect & Display Classes
-#==================================================
-classNames = sorted(os.listdir(trainingSetDirectory))
-classQuantity = len(classNames)
-print("[SYSTEM MESSAGE] Detected Classes: ", classNames)
-print("[SYSTEM MESSAGE] Number Of Classes: ", classQuantity)
 
 #==================================================
 #Load All Class Images Function
 #==================================================
-def loadImages():
+def loadImages(trainingSetDirectory, classNames):
     allImagesArray = []
     allLabelsArray = []
     for classLabel, className in enumerate(classNames):
@@ -64,33 +93,6 @@ def loadImages():
     return allImagesArray, allLabelsArray
 
 #==================================================
-#Load All Class Images
-#==================================================
-print("[SYSTEM MESSAGE] Loading Images...")
-xImages, yLabels = loadImages()
-print("[SYSTEM MESSAGE] Images Loaded!")
-
-#==================================================
-#Prepare Datasets
-#==================================================
-xTrainData = tf.convert_to_tensor(xImages, dtype = tf.float32)
-yTrainData = tf.convert_to_tensor(yLabels)
-dataSet = tf.data.Dataset.from_tensor_slices((xTrainData, yTrainData)).shuffle(len(yTrainData))
-testingSize = int(0.2 * len(yTrainData))
-trainDataSet = dataSet.skip(testingSize)
-testingDataSet = dataSet.take(testingSize)
-
-#==================================================
-#Data Augmentation
-#==================================================
-dataAugmentation = tf.keras.Sequential([
-    layers.RandomFlip("horizontal"),
-    layers.RandomRotation(0.2),
-    layers.RandomZoom(0.2),
-    layers.RandomContrast(0.1),
-])
-
-#==================================================
 #Preprocessing Function
 #==================================================
 def preprocess(x, y):
@@ -99,105 +101,157 @@ def preprocess(x, y):
     return x, y
 
 #==================================================
-#Preprocessing Datasets
+#Train Models
 #==================================================
-trainDataSet = trainDataSet.map(preprocess).shuffle(1000).batch(batchSize).prefetch(tf.data.AUTOTUNE)
-testingDataSet = testingDataSet.map(lambda x, y: (preprocess_input(x), y)).batch(batchSize).prefetch(tf.data.AUTOTUNE)
+for MODEL_NAME, SHOULD_TRAIN_MODEL in TRAIN_MODELS.items():
+    if SHOULD_TRAIN_MODEL == True:
+        print("============================================================")
+        print("[SYSTEM MESSAGE] Now Training Model: ", MODEL_NAME)
+        #==================================================
+        #Local Variables
+        #==================================================
+        trainingSetDirectory = currentDirectory / MODEL_TRAINING_SET_DIRECTORIES[MODEL_NAME]
+        AIModelsDirectory = os.path.join(currentDirectory, "AIModels")
 
-#==================================================
-#Base Model w/Transfer Learning (EfficientNetB0)
-#==================================================
-efficientNetB0BaseModel = EfficientNetB0(
-    include_top = False,
-    input_shape = (imageSize, imageSize, 3),
-    weights = "imagenet"
-)
-efficientNetB0BaseModel.trainable = False
+        #==================================================
+        #Detect & Display Classes
+        #==================================================
+        classNames = sorted(os.listdir(trainingSetDirectory))
+        classQuantity = len(classNames)
+        print("[SYSTEM MESSAGE] Detected Classes: ", classNames)
+        print("[SYSTEM MESSAGE] Number Of Classes: ", classQuantity)
 
-#==================================================
-#Build Model
-#==================================================
-trainingModel = models.Sequential([
-    layers.Input(shape = (imageSize, imageSize, 3)),
-    efficientNetB0BaseModel,
-    layers.GlobalAveragePooling2D(),
-    layers.Dropout(0.3),
-    layers.Dense(128, activation = "relu"),
-    layers.Dropout(0.3),
-    #classQuantity should be the number of classes, so the output should equal to the number of classes for multi-class classification
-    layers.Dense(classQuantity, activation = "softmax") #sigmoid => binary classificaiton, softmax => multi-class classification
-])
+        #==================================================
+        #Load All Class Images
+        #==================================================
+        print("[SYSTEM MESSAGE] Loading Images...")
+        xImages, yLabels = loadImages(trainingSetDirectory, classNames)
+        print("[SYSTEM MESSAGE] Images Loaded!")
 
-#==================================================
-#Compile Model
-#==================================================
-trainingModel.compile(
-    optimizer = tf.keras.optimizers.Adam(learning_rate = 1e-4),
-    loss = "sparse_categorical_crossentropy", #binary_crossentropy => binary classification, sparse_categorical_crossentropy => mutl-class classification
-    metrics = ["accuracy"]
-)
-#==================================================
-#Callbacks
-#==================================================
-learingRateReductionCallback = tf.keras.callbacks.ReduceLROnPlateau(
-    monitor = "val_loss",
-    factor = 0.5,
-    patience = 3,
-    min_lr = 1e-6,
-    verbose = 1
-)
-earlyStoppingCallback = tf.keras.callbacks.EarlyStopping(
-    monitor = "val_accuracy",
-    patience = 10,
-    restore_best_weights = True,
-    verbose = 1
-)
-checkpoint = tf.keras.callbacks.ModelCheckpoint(
-    filepath = os.path.join(AIModelsDirectory, "Training_Model_" + str(NEW_MODEL_VERSION) + ".h5"),
-    monitor = "val_accuracy",
-    save_best_only = True,
-    verbose = 1
-)
+        #==================================================
+        #Prepare Datasets
+        #==================================================
+        xTrainData = tf.convert_to_tensor(xImages, dtype = tf.float32)
+        yTrainData = tf.convert_to_tensor(yLabels)
+        dataSet = tf.data.Dataset.from_tensor_slices((xTrainData, yTrainData)).shuffle(len(yTrainData))
+        testingSize = int(0.2 * len(yTrainData))
+        trainDataSet = dataSet.skip(testingSize)
+        testingDataSet = dataSet.take(testingSize)
 
-#==================================================
-#Train Frozen Base Model (Stage 1)
-#==================================================
-trainingModel.fit(
-    trainDataSet,
-    validation_data = testingDataSet,
-    epochs = 10,
-    callbacks = [learingRateReductionCallback, earlyStoppingCallback, checkpoint]
-)
-#==================================================
-#Fine-Tune Top Layers (Stage 2)
-#==================================================
-efficientNetB0BaseModel.trainable = True
-for layer in efficientNetB0BaseModel.layers[:-20]:
-    layer.trainable = False
+        #==================================================
+        #Data Augmentation
+        #==================================================
+        dataAugmentation = tf.keras.Sequential([
+            layers.RandomFlip("horizontal"),
+            layers.RandomRotation(0.2),
+            layers.RandomZoom(0.2),
+            layers.RandomContrast(0.1),
+        ])
 
-#==================================================
-#Recompile For Fine-Tuning (With Lower LR)
-#==================================================
-trainingModel.compile(
-    optimizer = tf.keras.optimizers.Adam(learning_rate = 1e-5),
-    loss = "sparse_categorical_crossentropy", #binary_crossentropy => binary classification, sparse_categorical_crossentropy => mutl-class classification
-    metrics = ["accuracy"]
-)
+        #==================================================
+        #Preprocessing Datasets
+        #==================================================
+        trainDataSet = trainDataSet.map(preprocess).shuffle(1000).batch(batchSize).prefetch(tf.data.AUTOTUNE)
+        testingDataSet = testingDataSet.map(lambda x, y: (preprocess_input(x), y)).batch(batchSize).prefetch(tf.data.AUTOTUNE)
 
-#==================================================
-#Train Fine-Tune Model
-#==================================================
-trainingModel.fit(
-    trainDataSet,
-    validation_data=testingDataSet,
-    epochs = 20,
-    callbacks = [learingRateReductionCallback, earlyStoppingCallback, checkpoint]
-)
+        #==================================================
+        #Base Model w/Transfer Learning (EfficientNetB0)
+        #==================================================
+        efficientNetB0BaseModel = EfficientNetB0(
+            include_top = False,
+            input_shape = (imageSize, imageSize, 3),
+            weights = "imagenet"
+        )
+        efficientNetB0BaseModel.trainable = False
+
+        #==================================================
+        #Build Model
+        #==================================================
+        trainingModel = models.Sequential([
+            layers.Input(shape = (imageSize, imageSize, 3)),
+            efficientNetB0BaseModel,
+            layers.GlobalAveragePooling2D(),
+            layers.Dropout(0.3),
+            layers.Dense(128, activation = "relu"),
+            layers.Dropout(0.3),
+            #classQuantity should be the number of classes, so the output should equal to the number of classes for multi-class classification
+            layers.Dense(classQuantity, activation = "softmax") #sigmoid => binary classificaiton, softmax => multi-class classification
+        ])
+        
+        #==================================================
+        #Compile Model
+        #==================================================
+        trainingModel.compile(
+            optimizer = tf.keras.optimizers.Adam(learning_rate = 1e-4),
+            loss = "sparse_categorical_crossentropy", #binary_crossentropy => binary classification, sparse_categorical_crossentropy => mutl-class classification
+            metrics = ["accuracy"]
+        )
+
+        #==================================================
+        #Callbacks
+        #==================================================
+        learingRateReductionCallback = tf.keras.callbacks.ReduceLROnPlateau(
+            monitor = "val_loss",
+            factor = 0.5,
+            patience = 3,
+            min_lr = 1e-6,
+            verbose = 1
+        )
+        earlyStoppingCallback = tf.keras.callbacks.EarlyStopping(
+            monitor = "val_accuracy",
+            patience = 10,
+            restore_best_weights = True,
+            verbose = 1
+        )
+        checkpoint = tf.keras.callbacks.ModelCheckpoint(
+            filepath = os.path.join(AIModelsDirectory, MODEL_NAMES[MODEL_NAME] + str(MODEL_VERSIONS[MODEL_NAME]) + ".h5"),
+            monitor = "val_accuracy",
+            save_best_only = True,
+            verbose = 1
+        )
+
+        #==================================================
+        #Train Frozen Base Model (Stage 1)
+        #==================================================
+        trainingModel.fit(
+            trainDataSet,
+            validation_data = testingDataSet,
+            epochs = 10,
+            callbacks = [learingRateReductionCallback, earlyStoppingCallback, checkpoint]
+        )
+        #==================================================
+        #Fine-Tune Top Layers (Stage 2)
+        #==================================================
+        efficientNetB0BaseModel.trainable = True
+        for layer in efficientNetB0BaseModel.layers[:-20]:
+            layer.trainable = False
+
+        #==================================================
+        #Recompile For Fine-Tuning (With Lower LR)
+        #==================================================
+        trainingModel.compile(
+            optimizer = tf.keras.optimizers.Adam(learning_rate = 1e-5),
+            loss = "sparse_categorical_crossentropy", #binary_crossentropy => binary classification, sparse_categorical_crossentropy => mutl-class classification
+            metrics = ["accuracy"]
+        )
+
+        #==================================================
+        #Train Fine-Tune Model
+        #==================================================
+        trainingModel.fit(
+            trainDataSet,
+            validation_data=testingDataSet,
+            epochs = 20,
+            callbacks = [learingRateReductionCallback, earlyStoppingCallback, checkpoint]
+        )
+
+        print("[SYSTEM MESSAGE] Finished Training Model: ", MODEL_NAME)
+        print("============================================================")
 
 #==================================================
 #Execute test.py To Test Model
 #==================================================
-subprocess.run([sys.executable, "test.py"])
+#subprocess.run([sys.executable, "test.py"])
 
 #==================================================
 #Terminate Program

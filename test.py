@@ -1,4 +1,4 @@
-#UPDATE VERSION [29]
+#UPDATE VERSION [30]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -27,12 +27,13 @@ from sklearn.metrics import confusion_matrix, accuracy_score, classification_rep
 #==================================================
 #Declare Variables
 #==================================================
-CURRENT_MODEL_VERSION = 4
+MAIN_CLASSIFIER_MODEL = "MAIN_CLASSIFIER_MODEL_VERSION_"
+MAIN_CLASSIFIER_MODEL_VERSION = 4
 imageSize = 224
 currentDirectory = Path(__file__).resolve().parent
 testingSetDirectory = currentDirectory / "DataSets" / "TestingSet"
 trainingSetDirectory = currentDirectory / "DataSets" / "TrainingSet"
-AIModelsDirectory = currentDirectory / "AIModels" / ("Training_Model_" + str(CURRENT_MODEL_VERSION) + ".h5")
+AIModelsDirectory = currentDirectory / "AIModels" / (MAIN_CLASSIFIER_MODEL + str(MAIN_CLASSIFIER_MODEL_VERSION) + ".h5")
 
 #==================================================
 #Detect & Display Classes
