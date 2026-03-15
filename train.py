@@ -1,4 +1,4 @@
-#UPDATE VERSION [32]
+#UPDATE VERSION [33]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -252,7 +252,7 @@ for MODEL_NAME, SHOULD_TRAIN_MODEL in TRAIN_MODELS.items():
 #==================================================
 #Execute test.py To Test Model
 #==================================================
-#subprocess.run([sys.executable, "test.py"])
+subprocess.run([sys.executable, "test.py"])
 
 #==================================================
 #Terminate Program

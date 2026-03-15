@@ -1,4 +1,4 @@
-#UPDATE VERSION [32]
+#UPDATE VERSION [33]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -52,6 +52,27 @@ MODEL_TRAINING_SET_DIRECTORIES = {
     "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Cars",
     "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Cats",
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Dogs",
+}
+
+#==================================================
+#Attribute Accuracy
+#==================================================
+ATTRIBUTE_ACCURACY = {
+    "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": {
+        "Attribute": "Car Model",
+        "Total": 0,
+        "Predicted": 0,
+    },
+    "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": {
+        "Attribute": "Cat Breed",
+        "Total": 0,
+        "Predicted": 0,
+    },
+    "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": {
+        "Attribute": "Dog Breed",
+        "Total": 0,
+        "Predicted": 0,
+    },
 }
 
 #==================================================
@@ -166,18 +187,30 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
                 analysisAttribute, analysisConfidence = analyzeImage(imagePath, CAR_MODEL_ANALYZER_MODEL, CAR_MODEL_ANALYZER_CLASS_NAMES)
                 if analysisAttribute is None:
                     continue
+                attributeValue = file.split("_")[1]
+                if attributeValue == analysisAttribute:
+                    ATTRIBUTE_ACCURACY["CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL"]["Predicted"] += 1
+                ATTRIBUTE_ACCURACY["CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL"]["Total"] += 1
             case "Cats":
                 print("[SYSTEM MESSAGE] Analyzing Cat Breed...")
                 attributeLabel = " Attribute [Cat Breed]: "
                 analysisAttribute, analysisConfidence = analyzeImage(imagePath, CAT_BREED_ANALYZER_MODEL, CAT_BREED_ANALYZER_CLASS_NAMES)
                 if analysisAttribute is None:
                     continue
+                attributeValue = file.split("_")[1]
+                if attributeValue == analysisAttribute:
+                    ATTRIBUTE_ACCURACY["CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]["Predicted"] += 1
+                ATTRIBUTE_ACCURACY["CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]["Total"] += 1
             case "Dogs":
                 print("[SYSTEM MESSAGE] Analyzing Dog Breed...")
                 attributeLabel = " Attribute [Dog Breed]: "
                 analysisAttribute, analysisConfidence = analyzeImage(imagePath, DOG_BREED_ANALYZER_MODEL, DOG_BREED_ANALYZER_CLASS_NAMES)
                 if analysisAttribute is None:
                     continue
+                attributeValue = file.split("_")[1]
+                if attributeValue == analysisAttribute:
+                    ATTRIBUTE_ACCURACY["DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]["Predicted"] += 1
+                ATTRIBUTE_ACCURACY["DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]["Total"] += 1
             case _:
                 print("[SYSTEM MESSAGE] Unknown Class")
         print("[SYSTEM MESSAGE] [CLASSIFICATION] Image: ", file," Predicted Classification: ", classificationClass, " Actual Classification: ", className, " Confidence: ", round(classificationConfidence * 100, 2)," %")
@@ -187,8 +220,8 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
 #==================================================
 #Classification Accuracy
 #==================================================
-accuracy = round(accuracy_score(classificationTrueLabels, classificationPredictedLabels) * 100, 2)
-print("[SYSTEM MESSAGE] Classification Accuracy: " + str(accuracy) + "%")
+classificationAccuracy = round(accuracy_score(classificationTrueLabels, classificationPredictedLabels) * 100, 2)
+print("[SYSTEM MESSAGE] Classification Accuracy: " + str(classificationAccuracy) + "%")
 print("[SYSTEM MESSAGE] Classification Report: ",classification_report(classificationTrueLabels, classificationPredictedLabels, target_names = MAIN_CLASSIFIER_CLASS_NAMES))
 
 #==================================================
@@ -206,6 +239,17 @@ plt.xlabel("Classification Predicted Label")
 plt.ylabel("Classification True Label")
 plt.tight_layout()
 plt.show()
+
+#==================================================
+#Analysis Accuracy
+#==================================================
+totalImagesPredicted = 0
+totalImagesTested = 0
+for attribute, value in ATTRIBUTE_ACCURACY.items():
+    totalImagesPredicted += value["Predicted"]
+    totalImagesTested += value["Total"]
+    print("[SYSTEM MESSAGE] Analysis Accuracy For Attribute ", value["Attribute"], " Accuracy: ", str(round((value["Predicted"] / value["Total"]) * 100, 2)), "% [" + str(value["Predicted"]) + "/" + str(value["Total"]) + "]")
+print("[SYSTEM MESSAGE] Total Analysis Accuracy: ", str(round((totalImagesPredicted / totalImagesTested) * 100, 2)),"% [" + str(totalImagesPredicted) + "/" + str(totalImagesTested) + "]\n")
 
 #==================================================
 #Terminate Program
