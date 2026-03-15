@@ -1,4 +1,4 @@
-#UPDATE VERSION [30]
+#UPDATE VERSION [31]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -26,7 +26,7 @@ from tensorflow.keras.applications import EfficientNetB0
 from tensorflow.keras.applications.efficientnet import preprocess_input
 
 #==================================================
-#Model Variables
+#Model Names
 #==================================================
 MODEL_NAMES = {
     "MAIN_CLASSIFIER_MODEL": "MAIN_CLASSIFIER_MODEL_VERSION_",
@@ -49,10 +49,10 @@ MODEL_VERSIONS = {
 #Model Training Set Directories
 #==================================================
 MODEL_TRAINING_SET_DIRECTORIES = {
-    "MAIN_CLASSIFIER_MODEL": "DataSets" / "TrainingSet",
-    "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": "DataSets" / "AttributeTrainingSet" / "Cars",
-    "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": "DataSets" / "AttributeTrainingSet" / "Cats",
-    "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": "DataSets" / "AttributeTrainingSet" / "Dogs",
+    "MAIN_CLASSIFIER_MODEL": Path("DataSets") / "TrainingSet",
+    "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Cars",
+    "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Cats",
+    "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Dogs",
 }
 
 #==================================================
@@ -107,6 +107,7 @@ for MODEL_NAME, SHOULD_TRAIN_MODEL in TRAIN_MODELS.items():
     if SHOULD_TRAIN_MODEL == True:
         print("============================================================")
         print("[SYSTEM MESSAGE] Now Training Model: ", MODEL_NAME)
+
         #==================================================
         #Local Variables
         #==================================================
