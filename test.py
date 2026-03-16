@@ -1,10 +1,10 @@
-#UPDATE VERSION [34]
+#UPDATE VERSION [35]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
 #Professor: Amit Das
 #Name: Christian Tampus
-#Description: Multi-Class Image Classifier AI Model
+#Description: General Purpose Image Classifier & Analyzer
 #Assignment: Semester Project
 #==================================================
 
