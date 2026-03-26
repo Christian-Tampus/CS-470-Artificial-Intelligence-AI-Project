@@ -1,4 +1,4 @@
-#UPDATE VERSION [36]
+#UPDATE VERSION [37]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -33,6 +33,7 @@ MODEL_NAMES = {
     "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
     "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
+    "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
 }
 
 #==================================================
@@ -43,6 +44,7 @@ MODEL_VERSIONS = {
     "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": 1,
     "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 1,
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 1,
+    "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": 1,
 }
 
 #==================================================
@@ -53,16 +55,18 @@ MODEL_TRAINING_SET_DIRECTORIES = {
     "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Cars",
     "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Cats",
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Dogs",
+    "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Human",
 }
 
 #==================================================
 #Train Models
 #==================================================
 TRAIN_MODELS = {
-    "MAIN_CLASSIFIER_MODEL": False,
-    "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": True,
-    "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": True,
-    "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": True,
+    "MAIN_CLASSIFIER_MODEL": True,
+    "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": False,
+    "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": False,
+    "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": False,
+    "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": True,
 }
 
 #==================================================
