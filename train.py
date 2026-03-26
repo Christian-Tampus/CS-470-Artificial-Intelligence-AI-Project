@@ -1,4 +1,4 @@
-#UPDATE VERSION [37]
+#UPDATE VERSION [38]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -40,7 +40,7 @@ MODEL_NAMES = {
 #Model Versions
 #==================================================
 MODEL_VERSIONS = {
-    "MAIN_CLASSIFIER_MODEL": 4,
+    "MAIN_CLASSIFIER_MODEL": 5,
     "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": 1,
     "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 1,
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 1,
