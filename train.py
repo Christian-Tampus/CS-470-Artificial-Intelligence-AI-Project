@@ -1,4 +1,4 @@
-#UPDATE VERSION [38]
+#UPDATE VERSION [39]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -55,7 +55,7 @@ MODEL_TRAINING_SET_DIRECTORIES = {
     "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Cars",
     "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Cats",
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Dogs",
-    "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Human",
+    "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Humans",
 }
 
 #==================================================
