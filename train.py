@@ -1,4 +1,4 @@
-#UPDATE VERSION [44]
+#UPDATE VERSION [45]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -171,12 +171,10 @@ def loadImages(trainingSetDirectory, classNames):
 def preprocess(x, y):
     if MODEL_PREPROCESS_GRAYSCALE[CURRENT_MODEL_IN_TRAINING] == True:
         x = tf.image.rgb_to_grayscale(x)
-        edges = tf.image.sobel_edges(x)
-        edges = tf.reduce_mean(edges, axis = -1)
-        edges = tf.image.grayscale_to_rgb(edges)
-        x = dataAugmentation(edges, training = True)
+        x = tf.image.grayscale_to_rgb(x)
+        x = dataAugmentation(x, training = True)
         x = preprocess_input(x)
-    else:
+    #else:
         x = dataAugmentation(x, training = True)
         x = preprocess_input(x)
     return x, y
