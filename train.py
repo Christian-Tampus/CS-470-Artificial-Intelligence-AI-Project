@@ -1,4 +1,4 @@
-#UPDATE VERSION [42]
+#UPDATE VERSION [44]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -96,9 +96,34 @@ MODEL_AUGMENTATION_CONFIG_TABLE = {
         {"Type": "RandomContrast", "Value": 0.1},
     ],
     "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": [
+        {"Type": "RandomFlip", "Value": "horizontal"},
         {"Type": "RandomRotation", "Value": 0.1},
         {"Type": "RandomZoom", "Value": 0.1},
     ],
+}
+
+#==================================================
+#Model Preprocess Grayscale
+#==================================================
+MODEL_PREPROCESS_GRAYSCALE = {
+    "MAIN_CLASSIFIER_MODEL": False,
+    "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": False,
+    "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": False,
+    "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": False,
+    "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": False,
+    "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": True,
+}
+
+#==================================================
+#Model Image Size
+#==================================================
+MODEL_IMAGE_SIZE = {
+    "MAIN_CLASSIFIER_MODEL": 224,
+    "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": 224,
+    "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 224,
+    "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 224,
+    "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": 224,
+    "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": 128,
 }
 
 #==================================================
@@ -116,9 +141,9 @@ TRAIN_MODELS = {
 #==================================================
 #Global Variables
 #==================================================
-imageSize = 224
 batchSize = 32
 currentDirectory = Path(__file__).resolve().parent
+CURRENT_MODEL_IN_TRAINING = ""
 
 #==================================================
 #Load All Class Images Function
@@ -131,7 +156,7 @@ def loadImages(trainingSetDirectory, classNames):
         for file in os.listdir(classFolder):
             imagePath = classFolder / file
             try:
-                image = tf.keras.utils.load_img(imagePath, target_size = (imageSize, imageSize))
+                image = tf.keras.utils.load_img(imagePath, target_size = (MODEL_IMAGE_SIZE[CURRENT_MODEL_IN_TRAINING], MODEL_IMAGE_SIZE[CURRENT_MODEL_IN_TRAINING]))
                 imageArray = tf.keras.utils.img_to_array(image)
             except Exception as error:
                 print("[SYSTEM ERROR] Exception Error: ", error, " File Path: ", imagePath)
@@ -144,8 +169,16 @@ def loadImages(trainingSetDirectory, classNames):
 #Preprocessing Function
 #==================================================
 def preprocess(x, y):
-    x = dataAugmentation(x, training = True)
-    x = preprocess_input(x)
+    if MODEL_PREPROCESS_GRAYSCALE[CURRENT_MODEL_IN_TRAINING] == True:
+        x = tf.image.rgb_to_grayscale(x)
+        edges = tf.image.sobel_edges(x)
+        edges = tf.reduce_mean(edges, axis = -1)
+        edges = tf.image.grayscale_to_rgb(edges)
+        x = dataAugmentation(edges, training = True)
+        x = preprocess_input(x)
+    else:
+        x = dataAugmentation(x, training = True)
+        x = preprocess_input(x)
     return x, y
 
 #==================================================
@@ -155,6 +188,7 @@ for MODEL_NAME, SHOULD_TRAIN_MODEL in TRAIN_MODELS.items():
     if SHOULD_TRAIN_MODEL == True:
         print("============================================================")
         print("[SYSTEM MESSAGE] Now Training Model: ", MODEL_NAME)
+        CURRENT_MODEL_IN_TRAINING = MODEL_NAME
 
         #==================================================
         #Local Variables
@@ -214,7 +248,7 @@ for MODEL_NAME, SHOULD_TRAIN_MODEL in TRAIN_MODELS.items():
         #==================================================
         efficientNetB0BaseModel = EfficientNetB0(
             include_top = False,
-            input_shape = (imageSize, imageSize, 3),
+            input_shape = (MODEL_IMAGE_SIZE[CURRENT_MODEL_IN_TRAINING], MODEL_IMAGE_SIZE[CURRENT_MODEL_IN_TRAINING], 3),
             weights = "imagenet"
         )
         efficientNetB0BaseModel.trainable = False
@@ -223,7 +257,7 @@ for MODEL_NAME, SHOULD_TRAIN_MODEL in TRAIN_MODELS.items():
         #Build Model
         #==================================================
         trainingModel = models.Sequential([
-            layers.Input(shape = (imageSize, imageSize, 3)),
+            layers.Input(shape = (MODEL_IMAGE_SIZE[CURRENT_MODEL_IN_TRAINING], MODEL_IMAGE_SIZE[CURRENT_MODEL_IN_TRAINING], 3)),
             efficientNetB0BaseModel,
             layers.GlobalAveragePooling2D(),
             layers.Dropout(0.3),
