@@ -1,4 +1,4 @@
-#UPDATE VERSION [45]
+#UPDATE VERSION [46]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -166,20 +166,6 @@ def loadImages(trainingSetDirectory, classNames):
     return allImagesArray, allLabelsArray
 
 #==================================================
-#Preprocessing Function
-#==================================================
-def preprocess(x, y):
-    if MODEL_PREPROCESS_GRAYSCALE[CURRENT_MODEL_IN_TRAINING] == True:
-        x = tf.image.rgb_to_grayscale(x)
-        x = tf.image.grayscale_to_rgb(x)
-        x = dataAugmentation(x, training = True)
-        x = preprocess_input(x)
-    #else:
-        x = dataAugmentation(x, training = True)
-        x = preprocess_input(x)
-    return x, y
-
-#==================================================
 #Train Models
 #==================================================
 for MODEL_NAME, SHOULD_TRAIN_MODEL in TRAIN_MODELS.items():
@@ -234,6 +220,18 @@ for MODEL_NAME, SHOULD_TRAIN_MODEL in TRAIN_MODELS.items():
             elif type == "RandomContrast":
                 dataAugmentationArray.append(layers.RandomContrast(augmentation.get("Value")))
         dataAugmentation = tf.keras.Sequential(dataAugmentationArray)
+
+        #==================================================
+        #Preprocessing Function
+        #==================================================
+        def preprocess(x, y):
+            if MODEL_PREPROCESS_GRAYSCALE[CURRENT_MODEL_IN_TRAINING] == True:
+                x = dataAugmentation(x, training = True)
+                x = preprocess_input(x)
+            else:
+                x = dataAugmentation(x, training = True)
+                x = preprocess_input(x)
+            return x, y
 
         #==================================================
         #Preprocessing Datasets
