@@ -1,4 +1,4 @@
-#UPDATE VERSION [41]
+#UPDATE VERSION [42]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -41,12 +41,12 @@ MODEL_NAMES = {
 #Model Versions
 #==================================================
 MODEL_VERSIONS = {
-    "MAIN_CLASSIFIER_MODEL": 5,
+    "MAIN_CLASSIFIER_MODEL": 6,
     "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": 1,
     "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 1,
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 1,
     "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": 1,
-    "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": 1,
+    "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": 2,
 }
 
 #==================================================
@@ -62,10 +62,50 @@ MODEL_TRAINING_SET_DIRECTORIES = {
 }
 
 #==================================================
+#Model Augmentation Config Table
+#==================================================
+MODEL_AUGMENTATION_CONFIG_TABLE = {
+    "MAIN_CLASSIFIER_MODEL": [
+        {"Type": "RandomFlip", "Value": "horizontal"},
+        {"Type": "RandomRotation", "Value": 0.2},
+        {"Type": "RandomZoom", "Value": 0.2},
+        {"Type": "RandomContrast", "Value": 0.1},
+    ],
+    "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": [
+        {"Type": "RandomFlip", "Value": "horizontal"},
+        {"Type": "RandomRotation", "Value": 0.2},
+        {"Type": "RandomZoom", "Value": 0.2},
+        {"Type": "RandomContrast", "Value": 0.1},
+    ],
+    "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": [
+        {"Type": "RandomFlip", "Value": "horizontal"},
+        {"Type": "RandomRotation", "Value": 0.2},
+        {"Type": "RandomZoom", "Value": 0.2},
+        {"Type": "RandomContrast", "Value": 0.1},
+    ],
+    "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": [
+        {"Type": "RandomFlip", "Value": "horizontal"},
+        {"Type": "RandomRotation", "Value": 0.2},
+        {"Type": "RandomZoom", "Value": 0.2},
+        {"Type": "RandomContrast", "Value": 0.1},
+    ],
+    "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": [
+        {"Type": "RandomFlip", "Value": "horizontal"},
+        {"Type": "RandomRotation", "Value": 0.2},
+        {"Type": "RandomZoom", "Value": 0.2},
+        {"Type": "RandomContrast", "Value": 0.1},
+    ],
+    "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": [
+        {"Type": "RandomRotation", "Value": 0.1},
+        {"Type": "RandomZoom", "Value": 0.1},
+    ],
+}
+
+#==================================================
 #Train Models
 #==================================================
 TRAIN_MODELS = {
-    "MAIN_CLASSIFIER_MODEL": True,
+    "MAIN_CLASSIFIER_MODEL": False,
     "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": False,
     "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": False,
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": False,
@@ -150,12 +190,18 @@ for MODEL_NAME, SHOULD_TRAIN_MODEL in TRAIN_MODELS.items():
         #==================================================
         #Data Augmentation
         #==================================================
-        dataAugmentation = tf.keras.Sequential([
-            layers.RandomFlip("horizontal"),
-            layers.RandomRotation(0.2),
-            layers.RandomZoom(0.2),
-            layers.RandomContrast(0.1),
-        ])
+        dataAugmentationArray = []
+        for augmentation in MODEL_AUGMENTATION_CONFIG_TABLE[MODEL_NAME]:
+            type = augmentation.get("Type")
+            if type == "RandomFlip":
+                dataAugmentationArray.append(layers.RandomFlip(augmentation.get("Value")))
+            elif type == "RandomRotation":
+                dataAugmentationArray.append(layers.RandomRotation(augmentation.get("Value")))
+            elif type == "RandomZoom":
+                dataAugmentationArray.append(layers.RandomZoom(augmentation.get("Value")))
+            elif type == "RandomContrast":
+                dataAugmentationArray.append(layers.RandomContrast(augmentation.get("Value")))
+        dataAugmentation = tf.keras.Sequential(dataAugmentationArray)
 
         #==================================================
         #Preprocessing Datasets
