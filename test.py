@@ -1,4 +1,4 @@
-#UPDATE VERSION [45]
+#UPDATE VERSION [46]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -94,9 +94,20 @@ ATTRIBUTE_ACCURACY = {
 }
 
 #==================================================
+#Model Image Size
+#==================================================
+MODEL_IMAGE_SIZE = {
+    "MAIN_CLASSIFIER_MODEL": 224,
+    "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": 224,
+    "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 224,
+    "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 224,
+    "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": 224,
+    "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": 128,
+}
+
+#==================================================
 #Global Variables
 #==================================================
-imageSize = 224
 currentDirectory = Path(__file__).resolve().parent
 testingSetDirectory = currentDirectory / "DataSets" / "TestingSet"
 MAIN_CLASSIFIER_TESTING_SET_DIRECTORY = currentDirectory / MODEL_TRAINING_SET_DIRECTORIES["MAIN_CLASSIFIER_MODEL"]
@@ -153,7 +164,7 @@ CHARACTER_TYPE_ANALYZER_MODEL = tf.keras.models.load_model(CHARACTER_TYPE_ATTRIB
 #==================================================
 def classifyImage(directory):
     try:
-        image = Image.open(directory).convert("RGB").resize((imageSize, imageSize))
+        image = Image.open(directory).convert("RGB").resize((MODEL_IMAGE_SIZE["MAIN_CLASSIFIER_MODEL"], MODEL_IMAGE_SIZE["MAIN_CLASSIFIER_MODEL"]))
     except Exception as error:
         print("[SYSTEM ERROR] Exception Error: ", error, " File Path: ", directory)
         return None, None
@@ -169,9 +180,9 @@ def classifyImage(directory):
 #==================================================
 #Analyze Image Function
 #==================================================
-def analyzeImage(directory, analyzerModel, attributeNames):
+def analyzeImage(directory, analyzerModel, attributeNames, modelName):
     try:
-        image = Image.open(directory).convert("RGB").resize((imageSize, imageSize))
+        image = Image.open(directory).convert("RGB").resize((MODEL_IMAGE_SIZE[modelName], MODEL_IMAGE_SIZE[modelName]))
     except Exception as error:
         print("[SYSTEM ERROR] Exception Error: ", error, " File Path: ", directory)
         return None, None
@@ -229,7 +240,7 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
             case "Cars":
                 print("[SYSTEM MESSAGE] Analyzing Car Model...")
                 attributeLabel = " Attribute [Car Model]: "
-                analysisAttribute, analysisConfidence = analyzeImage(imagePath, CAR_MODEL_ANALYZER_MODEL, CAR_MODEL_ANALYZER_CLASS_NAMES)
+                analysisAttribute, analysisConfidence = analyzeImage(imagePath, CAR_MODEL_ANALYZER_MODEL, CAR_MODEL_ANALYZER_CLASS_NAMES, "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL")
                 if analysisAttribute is None:
                     continue
                 attributeValue = file.split("_")[1]
@@ -238,7 +249,7 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
             case "Cats":
                 print("[SYSTEM MESSAGE] Analyzing Cat Breed...")
                 attributeLabel = " Attribute [Cat Breed]: "
-                analysisAttribute, analysisConfidence = analyzeImage(imagePath, CAT_BREED_ANALYZER_MODEL, CAT_BREED_ANALYZER_CLASS_NAMES)
+                analysisAttribute, analysisConfidence = analyzeImage(imagePath, CAT_BREED_ANALYZER_MODEL, CAT_BREED_ANALYZER_CLASS_NAMES, "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL")
                 if analysisAttribute is None:
                     continue
                 attributeValue = file.split("_")[1]
@@ -247,7 +258,7 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
             case "Dogs":
                 print("[SYSTEM MESSAGE] Analyzing Dog Breed...")
                 attributeLabel = " Attribute [Dog Breed]: "
-                analysisAttribute, analysisConfidence = analyzeImage(imagePath, DOG_BREED_ANALYZER_MODEL, DOG_BREED_ANALYZER_CLASS_NAMES)
+                analysisAttribute, analysisConfidence = analyzeImage(imagePath, DOG_BREED_ANALYZER_MODEL, DOG_BREED_ANALYZER_CLASS_NAMES, "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL")
                 if analysisAttribute is None:
                     continue
                 attributeValue = file.split("_")[1]
@@ -256,7 +267,7 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
             case "Humans":
                 print("[SYSTEM MESSAGE] Analyzing Human Race...")
                 attributeLabel = " Attribute [Human Race]: "
-                analysisAttribute, analysisConfidence = analyzeImage(imagePath, HUMAN_RACE_ANALYZER_MODEL, HUMAN_RACE_ANALYZER_CLASS_NAMES)
+                analysisAttribute, analysisConfidence = analyzeImage(imagePath, HUMAN_RACE_ANALYZER_MODEL, HUMAN_RACE_ANALYZER_CLASS_NAMES, "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL")
                 if analysisAttribute is None:
                     continue
                 attributeValue = file.split("_")[1]
@@ -265,7 +276,7 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
             case "Characters":
                 print("[SYSTEM MESSAGE] Analyzing Character Type...")
                 attributeLabel = " Attribute [Character Type]: "
-                analysisAttribute, analysisConfidence = analyzeImage(imagePath, CHARACTER_TYPE_ANALYZER_MODEL, CHARACTER_TYPE_ANALYZER_CLASS_NAMES)
+                analysisAttribute, analysisConfidence = analyzeImage(imagePath, CHARACTER_TYPE_ANALYZER_MODEL, CHARACTER_TYPE_ANALYZER_CLASS_NAMES, "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL")
                 if analysisAttribute is None:
                     continue
                 attributeValue = file.split("_")[1]
