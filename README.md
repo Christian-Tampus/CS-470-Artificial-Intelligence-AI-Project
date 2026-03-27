@@ -1,4 +1,4 @@
-# UPDATE VERSION [40]
+# UPDATE VERSION [41]
 
 ## CS-470 Artificial Intelligence Project
 **General Purpose Image Classifier & Analyzer**

@@ -1,4 +1,4 @@
-#UPDATE VERSION [40]
+#UPDATE VERSION [41]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -35,17 +35,19 @@ MODEL_NAMES = {
     "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
     "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
+    "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
 }
 
 #==================================================
 #Model Versions
 #==================================================
 MODEL_VERSIONS = {
-    "MAIN_CLASSIFIER_MODEL": 4,
+    "MAIN_CLASSIFIER_MODEL": 5,
     "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": 1,
     "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 1,
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 1,
     "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": 1,
+    "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": 1,
 }
 
 #==================================================
@@ -57,6 +59,7 @@ MODEL_TRAINING_SET_DIRECTORIES = {
     "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Cats",
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Dogs",
     "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Humans",
+    "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Characters",
 }
 
 #==================================================
@@ -83,6 +86,11 @@ ATTRIBUTE_ACCURACY = {
         "Total": 0,
         "Predicted": 0,
     },
+    "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": {
+        "Attribute": "Character Type",
+        "Total": 0,
+        "Predicted": 0,
+    }
 }
 
 #==================================================
@@ -96,11 +104,13 @@ CAR_MODEL_ANALYZER_MODEL_TESTING_SET_DIRECTORY = currentDirectory / MODEL_TRAINI
 CAT_BREED_ANALYZER_MODEL_TESTING_SET_DIRECTORY = currentDirectory / MODEL_TRAINING_SET_DIRECTORIES["CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]
 DOG_BREED_ANALYZER_MODEL_TESTING_SET_DIRECTORY = currentDirectory / MODEL_TRAINING_SET_DIRECTORIES["DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]
 HUMAN_RACE_ANALYZER_MODEL_TESTING_SET_DIRECTORY = currentDirectory / MODEL_TRAINING_SET_DIRECTORIES["HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL"]
+CHARACTER_TYPE_ANALYZER_MODEL_TESTING_SET_DIRECTORY = currentDirectory / MODEL_TRAINING_SET_DIRECTORIES["CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL"]
 MAIN_CLASSIFIER_MODEL_DIRECTORY = currentDirectory / "AIModels" / (MODEL_NAMES["MAIN_CLASSIFIER_MODEL"] + str(MODEL_VERSIONS["MAIN_CLASSIFIER_MODEL"]) + ".h5")
 CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL_DIRECTORY = currentDirectory / "AIModels" / (MODEL_NAMES["CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL"] + str(MODEL_VERSIONS["CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL"]) + ".h5")
 CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL_DIRECTORY = currentDirectory / "AIModels" / (MODEL_NAMES["CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL"] + str(MODEL_VERSIONS["CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]) + ".h5")
 DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL_DIRECTORY = currentDirectory / "AIModels" / (MODEL_NAMES["DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL"] + str(MODEL_VERSIONS["DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]) + ".h5")
 HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL_DIRECTORY = currentDirectory / "AIModels" / (MODEL_NAMES["HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL"] + str(MODEL_VERSIONS["HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL"]) + ".h5")
+CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL_DIRECTORY = currentDirectory / "AIModels" / (MODEL_NAMES["CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL"] + str(MODEL_VERSIONS["CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL"]) + ".h5")
 
 #==================================================
 #Detect & Display Classes
@@ -115,6 +125,8 @@ DOG_BREED_ANALYZER_CLASS_NAMES = sorted(os.listdir(DOG_BREED_ANALYZER_MODEL_TEST
 DOG_BREED_ANALYZER_CLASS_QUANTITY = len(DOG_BREED_ANALYZER_CLASS_NAMES)
 HUMAN_RACE_ANALYZER_CLASS_NAMES = sorted(os.listdir(HUMAN_RACE_ANALYZER_MODEL_TESTING_SET_DIRECTORY))
 HUMAN_RACE_ANALYZER_CLASS_QUANTITY = len(HUMAN_RACE_ANALYZER_CLASS_NAMES)
+CHARACTER_TYPE_ANALYZER_CLASS_NAMES = sorted(os.listdir(CHARACTER_TYPE_ANALYZER_MODEL_TESTING_SET_DIRECTORY))
+CHARACTER_TYPE_ANALYZER_CLASS_QUANTITY = len(CHARACTER_TYPE_ANALYZER_CLASS_NAMES)
 print("[SYSTEM MESSAGE] MAIN_CLASSIFIER_CLASS_NAMES Classes: ", MAIN_CLASSIFIER_CLASS_NAMES)
 print("[SYSTEM MESSAGE] MAIN_CLASSIFIER_CLASS_QUANTITY Quantity: ", MAIN_CLASSIFIER_CLASS_QUANTITY)
 print("[SYSTEM MESSAGE] CAT_BREED_ANALYZER_CLASS_NAMES Classes: ", CAT_BREED_ANALYZER_CLASS_NAMES)
@@ -123,6 +135,8 @@ print("[SYSTEM MESSAGE] DOG_BREED_ANALYZER_CLASS_NAMES Classes: ", DOG_BREED_ANA
 print("[SYSTEM MESSAGE] DOG_BREED_ANALYZER_CLASS_QUANTITY Quantity: ", DOG_BREED_ANALYZER_CLASS_QUANTITY)
 print("[SYSTEM MESSAGE] HUMAN_RACE_ANALYZER_CLASS_NAMES Classes: ", HUMAN_RACE_ANALYZER_CLASS_NAMES)
 print("[SYSTEM MESSAGE] HUMAN_RACE_ANALYZER_CLASS_QUANTITY Quantity: ", HUMAN_RACE_ANALYZER_CLASS_QUANTITY)
+print("[SYSTEM MESSAGE] CHARACTER_TYPE_ANALYZER_CLASS_NAMES Classes: ", CHARACTER_TYPE_ANALYZER_CLASS_NAMES)
+print("[SYSTEM MESSAGE] CHARACTER_TYPE_ANALYZER_CLASS_QUANTITY Quantity: ", CHARACTER_TYPE_ANALYZER_CLASS_QUANTITY)
 
 #==================================================
 #Load Models
@@ -132,6 +146,7 @@ CAR_MODEL_ANALYZER_MODEL = tf.keras.models.load_model(CAR_MODEL_ATTRIBUTE_CLASSI
 CAT_BREED_ANALYZER_MODEL = tf.keras.models.load_model(CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL_DIRECTORY)
 DOG_BREED_ANALYZER_MODEL = tf.keras.models.load_model(DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL_DIRECTORY)
 HUMAN_RACE_ANALYZER_MODEL = tf.keras.models.load_model(HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL_DIRECTORY)
+CHARACTER_TYPE_ANALYZER_MODEL = tf.keras.models.load_model(CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL_DIRECTORY)
 
 #==================================================
 #Classify Image Function
@@ -208,6 +223,8 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
             ATTRIBUTE_ACCURACY["DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]["Total"] += 1
         elif classValue == "Human":
             ATTRIBUTE_ACCURACY["HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL"]["Total"] += 1
+        elif classValue == "Character":
+            ATTRIBUTE_ACCURACY["CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL"]["Total"] += 1
         match classificationClass:
             case "Cars":
                 print("[SYSTEM MESSAGE] Analyzing Car Model...")
@@ -236,7 +253,7 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
                 attributeValue = file.split("_")[1]
                 if attributeValue == analysisAttribute:
                     ATTRIBUTE_ACCURACY["DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL"]["Predicted"] += 1
-            case "Human":
+            case "Humans":
                 print("[SYSTEM MESSAGE] Analyzing Human Race...")
                 attributeLabel = " Attribute [Human Race]: "
                 analysisAttribute, analysisConfidence = analyzeImage(imagePath, HUMAN_RACE_ANALYZER_MODEL, HUMAN_RACE_ANALYZER_CLASS_NAMES)
@@ -245,6 +262,15 @@ for classIndex, className in enumerate(MAIN_CLASSIFIER_CLASS_NAMES):
                 attributeValue = file.split("_")[1]
                 if attributeValue == analysisAttribute:
                     ATTRIBUTE_ACCURACY["HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL"]["Predicted"] += 1
+            case "Characters":
+                print("[SYSTEM MESSAGE] Analyzing Character Type...")
+                attributeLabel = " Attribute [Character Type]: "
+                analysisAttribute, analysisConfidence = analyzeImage(imagePath, CHARACTER_TYPE_ANALYZER_MODEL, CHARACTER_TYPE_ANALYZER_CLASS_NAMES)
+                if analysisAttribute is None:
+                    continue
+                attributeValue = file.split("_")[1]
+                if attributeValue == analysisAttribute:
+                    ATTRIBUTE_ACCURACY["CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL"]["Predicted"] += 1
             case _:
                 print("[SYSTEM MESSAGE] Unknown Class")
         print("[SYSTEM MESSAGE] [CLASSIFICATION] Image: ", file," Predicted Classification: ", classificationClass, " Actual Classification: ", className, " Confidence: ", round(classificationConfidence * 100, 2)," %")
