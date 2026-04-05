@@ -1,4 +1,4 @@
-# UPDATE VERSION [47]
+# UPDATE VERSION [48]
 
 ## CS-470 Artificial Intelligence Project
 **General Purpose Image Classifier & Analyzer**
@@ -8,16 +8,25 @@
 2. Dog
 3. Car
 4. Human
-5. Fruit
+5. Character
+6. Planes
+7. Fish
+8. Food
+9. Tools
+10. ComputerParts
 
 ### Current Attributes:
 1. Cat -> Breed
 2. Dog -> Breed
 3. Car -> Model
 4. Human -> Race
-5. Fruit -> Type
+5. Character -> Type
+6. Planes -> Model
+7. Fish -> Species
+8. Food -> Type
+9. Tools -> Type
+10. ComputerParts -> Part
 
 ### Progress:
-1. [IN PROGRESS] Deploy Project With At Least x5 Classification Classes & x5 Attributes (x1 Per Class)
-2. [_] Scale Project With At Least x10 Classification Classes & x10 Attributes (x1 Per Class)
-3. [_] Improve Accuracy For Each Attribute Up To +70%
+1. [COMPLETED] Deploy Project With At Least x5 Classification Classes & x5 Attributes (x1 Per Class)
+2. [COMPLETED] Scale Project With At Least x10 Classification Classes & x10 Attributes (x1 Per Class)
