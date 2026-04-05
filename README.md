@@ -1,7 +1,7 @@
-# UPDATE VERSION [48]
+# UPDATE VERSION [50]
 
 ## CS-470 Artificial Intelligence Project
-**General Purpose Image Classifier & Analyzer**
+## General Purpose Image Classifier & Analyzer
 
 ### Current Classification Classes:
 1. Cat
@@ -23,10 +23,6 @@
 5. Character -> Type
 6. Planes -> Model
 7. Fish -> Species
-8. Food -> Type
+8. Food -> Dish
 9. Tools -> Type
 10. ComputerParts -> Part
-
-### Progress:
-1. [COMPLETED] Deploy Project With At Least x5 Classification Classes & x5 Attributes (x1 Per Class)
-2. [COMPLETED] Scale Project With At Least x10 Classification Classes & x10 Attributes (x1 Per Class)

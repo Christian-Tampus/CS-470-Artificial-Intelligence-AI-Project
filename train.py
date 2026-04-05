@@ -1,4 +1,4 @@
-#UPDATE VERSION [48]
+#UPDATE VERSION [50]
 
 #==================================================
 #Class: CS-470 Artificial Intelligence
@@ -35,6 +35,11 @@ MODEL_NAMES = {
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
     "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
     "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
+    "PLANE_MODEL_ATTRIBUTE_CLASSIFIER_MODEL" : "PLANE_MODEL_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
+    "FISH_SPECIES_ATTRIBUTE_CLASSIFIER_MODEL" : "FISH_SPECIES_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
+    "FOOD_DISH_ATTRIBUTE_CLASSIFIER_MODEL" : "FISH_DISH_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
+    "TOOL_TYPE_ATTRIBUTE_CLASSIFIER_MODEL" : "TOOL_TYPE_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
+    "COMPUTERPART_PART_ATTRIBUTE_CLASSIFIER_MODEL" : "COMPUTERPART_PART_ATTRIBUTE_CLASSIFIER_MODEL_VERSION_",
 }
 
 #==================================================
@@ -47,6 +52,11 @@ MODEL_VERSIONS = {
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 1,
     "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": 1,
     "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": 2,
+    "PLANE_MODEL_ATTRIBUTE_CLASSIFIER_MODEL" : 1,
+    "FISH_SPECIES_ATTRIBUTE_CLASSIFIER_MODEL": 1,
+    "FOOD_DISH_ATTRIBUTE_CLASSIFIER_MODEL": 1,
+    "TOOL_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": 1,
+    "COMPUTERPART_PART_ATTRIBUTE_CLASSIFIER_MODEL": 1,
 }
 
 #==================================================
@@ -59,6 +69,11 @@ MODEL_TRAINING_SET_DIRECTORIES = {
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Dogs",
     "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Humans",
     "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Characters",
+    "PLANE_MODEL_ATTRIBUTE_CLASSIFIER_MODEL" : Path("DataSets") / "AttributeTrainingSet" / "Planes",
+    "FISH_SPECIES_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Fish",
+    "FOOD_DISH_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Food",
+    "TOOL_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "Tools",
+    "COMPUTERPART_PART_ATTRIBUTE_CLASSIFIER_MODEL": Path("DataSets") / "AttributeTrainingSet" / "ComputerParts",
 }
 
 #==================================================
@@ -100,6 +115,36 @@ MODEL_AUGMENTATION_CONFIG_TABLE = {
         {"Type": "RandomRotation", "Value": 0.1},
         {"Type": "RandomZoom", "Value": 0.1},
     ],
+    "PLANE_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": [
+        {"Type": "RandomFlip", "Value": "horizontal"},
+        {"Type": "RandomRotation", "Value": 0.2},
+        {"Type": "RandomZoom", "Value": 0.2},
+        {"Type": "RandomContrast", "Value": 0.1},
+    ],
+    "FISH_SPECIES_ATTRIBUTE_CLASSIFIER_MODEL": [
+        {"Type": "RandomFlip", "Value": "horizontal"},
+        {"Type": "RandomRotation", "Value": 0.2},
+        {"Type": "RandomZoom", "Value": 0.2},
+        {"Type": "RandomContrast", "Value": 0.1},
+    ],
+    "FOOD_DISH_ATTRIBUTE_CLASSIFIER_MODEL": [
+        {"Type": "RandomFlip", "Value": "horizontal"},
+        {"Type": "RandomRotation", "Value": 0.2},
+        {"Type": "RandomZoom", "Value": 0.2},
+        {"Type": "RandomContrast", "Value": 0.1},
+    ],
+    "TOOL_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": [
+        {"Type": "RandomFlip", "Value": "horizontal"},
+        {"Type": "RandomRotation", "Value": 0.2},
+        {"Type": "RandomZoom", "Value": 0.2},
+        {"Type": "RandomContrast", "Value": 0.1},
+    ],
+    "COMPUTERPART_PART_ATTRIBUTE_CLASSIFIER_MODEL": [
+        {"Type": "RandomFlip", "Value": "horizontal"},
+        {"Type": "RandomRotation", "Value": 0.2},
+        {"Type": "RandomZoom", "Value": 0.2},
+        {"Type": "RandomContrast", "Value": 0.1},
+    ],
 }
 
 #==================================================
@@ -112,6 +157,11 @@ MODEL_PREPROCESS_GRAYSCALE = {
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": False,
     "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": False,
     "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": True,
+    "PLANE_MODEL_ATTRIBUTE_CLASSIFIER_MODEL" : False,
+    "FISH_SPECIES_ATTRIBUTE_CLASSIFIER_MODEL": False,
+    "FOOD_DISH_ATTRIBUTE_CLASSIFIER_MODEL": False,
+    "TOOL_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": False,
+    "COMPUTERPART_PART_ATTRIBUTE_CLASSIFIER_MODEL": False,
 }
 
 #==================================================
@@ -124,18 +174,28 @@ MODEL_IMAGE_SIZE = {
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": 224,
     "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": 224,
     "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": 128,
+    "PLANE_MODEL_ATTRIBUTE_CLASSIFIER_MODEL" : 224,
+    "FISH_SPECIES_ATTRIBUTE_CLASSIFIER_MODEL": 224,
+    "FOOD_DISH_ATTRIBUTE_CLASSIFIER_MODEL": 224,
+    "TOOL_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": 224,
+    "COMPUTERPART_PART_ATTRIBUTE_CLASSIFIER_MODEL": 224,
 }
 
 #==================================================
 #Train Models
 #==================================================
 TRAIN_MODELS = {
-    "MAIN_CLASSIFIER_MODEL": False,
+    "MAIN_CLASSIFIER_MODEL": True,
     "CAR_MODEL_ATTRIBUTE_CLASSIFIER_MODEL": False,
     "CAT_BREED_ATTRIBUTE_CLASSIFIER_MODEL": False,
     "DOG_BREED_ATTRIBUTE_CLASSIFIER_MODEL": False,
     "HUMAN_RACE_ATTRIBUTE_CLASSIFIER_MODEL": False,
-    "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": True,
+    "CHARACTER_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": False,
+    "PLANE_MODEL_ATTRIBUTE_CLASSIFIER_MODEL" : True,
+    "FISH_SPECIES_ATTRIBUTE_CLASSIFIER_MODEL": True,
+    "FOOD_DISH_ATTRIBUTE_CLASSIFIER_MODEL": True,
+    "TOOL_TYPE_ATTRIBUTE_CLASSIFIER_MODEL": True,
+    "COMPUTERPART_PART_ATTRIBUTE_CLASSIFIER_MODEL": True,
 }
 
 #==================================================
