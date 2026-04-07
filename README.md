@@ -1,7 +1,7 @@
-# UPDATE VERSION [51]
+# UPDATE VERSION [52]
 
 ## CS-470 Artificial Intelligence Project
-## General Purpose Image Classifier & Analyzer
+## General Purpose Image Classifier & Analyzer Trainer
 
 ### Current Classification Classes:
 1. Cat
